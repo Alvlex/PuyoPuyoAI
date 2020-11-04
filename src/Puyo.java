@@ -1,51 +1,37 @@
 import java.util.Random;
 
 public class Puyo {
-    Attribute colour;
-    int col;
-    int row;
-    boolean placed = false;
+    Colour colour;
 
-    private Puyo(Attribute colour){
+    Puyo(Colour colour){
         this.colour = colour;
+    }
+
+    public Puyo copyPuyo(){
+        return new Puyo(colour);
     }
 
     public static Puyo[] create2Puyo(){
         Random x = new Random();
-        int rand1 = x.nextInt(Attribute.values().length - 3);
-        int rand2 = x.nextInt(Attribute.values().length - 3);
-        Puyo p1 = new Puyo(Attribute.values()[rand1]);
-        Puyo p2 = new Puyo(Attribute.values()[rand2]);
-        p1.col = 7;
-        p1.row = 0;
-        p2.col = 7;
-        p2.row = 1;
+        int rand1 = x.nextInt(Colour.values().length - 3);
+        int rand2 = x.nextInt(Colour.values().length - 3);
+        Puyo p1 = new Puyo(Colour.values()[rand1]);
+        Puyo p2 = new Puyo(Colour.values()[rand2]);
         return new Puyo[]{p1,p2};
     }
 
-    public static Puyo[] createInitialPuyo(){
+    public static Puyo[][] createInitialPuyo(){
         Puyo[] p12 = create2Puyo();
         Puyo[] p34 = create2Puyo();
         Puyo[] p56 = create2Puyo();
-        for (Puyo p: p12){
-            p.col = 2;
-        }
-        for (Puyo p: p34){
-            p.col = 6;
-        }
-        return new Puyo[] {p12[0],p12[1],p34[0],p34[1],p56[0],p56[1]};
+        return new Puyo[][] {p12, p34, p56};
     }
 
     public static Puyo createBlack(){
-        return new Puyo(Attribute.BLACK);
+        return new Puyo(Colour.BLACK);
     }
 
-    public static Puyo createGrey(){
-        return new Puyo(Attribute.GREY);
-    }
-
-    public void setPosition(int col, int row){
-        this.col = col;
-        this.row = row;
+    public static Puyo createGarbage(){
+        return new Puyo(Colour.GREY);
     }
 }

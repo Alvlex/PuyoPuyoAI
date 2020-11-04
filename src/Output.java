@@ -3,46 +3,41 @@ public class Output {
     public static String printPuyo(Puyo p) {
         String output = "⬤";
         output = "\033[" + p.colour.value + "m" + output + "\033[0m";
-        return output;
+        return " " + output;
     }
 
-    public static void printCurrentPuyo(Puyo[] currentPuyo){
+    public static void printCurrentPuyo(Puyo[][] currentPuyo, Move m){
         String output = "";
-        for (int i = 1; i >= 0; i --) {
+        int[][] coords = m.getCoord();
+        for (int i = 0; i < 2; i ++){
             output += " ";
-            for (int j = 0; j < 8; j++) {
-                boolean puyoPrinted = false;
-                for (Puyo p: currentPuyo) {
-                    if (p.row == i && p.col == j) {
-                        output += " " + printPuyo(p);
-                        puyoPrinted = true;
+            for (int j = 0; j < 6; j ++){
+                boolean contentAdded = false;
+                for (int k = 0; k < 2; k ++){
+                    if (coords[k][0] == j && coords[k][1] == i){
+                        output += printPuyo(currentPuyo[0][k]);
+                        contentAdded = true;
+                        break;
                     }
                 }
-                if (!puyoPrinted) {
-                    output += " " + printPuyo(Puyo.createBlack());
-                }
-                if (j == 5){
-                    output += "   ";
-                }
-                else if (j == 6){
-                    output += " ";
-                }
+                if (!contentAdded)
+                    output += printPuyo(Puyo.createBlack());
             }
-            output += "\n";
+            output += "   " + printPuyo(currentPuyo[1][i]) + " " + printPuyo(currentPuyo[2][i]) + "\n";
         }
         System.out.print(output);
     }
 
-    public static void printBoard(Puyo[][] board){
+    public static void printBoard(Board board){
         String output = "";
-        for (int row = board[0].length - 1; row >= 0; row --){
+        for (int row = board.getNoRows() - 1; row >= 0; row --){
             output += "|";
-            for (int col = 0; col < board.length; col ++){
-                if (board[col][row] != null){
-                    output += " " + printPuyo(board[col][row]);
+            for (int col = 0; col < board.getNoCols(); col ++){
+                if (board.getPuyo(col,row) != null){
+                    output += printPuyo(board.getPuyo(col,row));
                 }
                 else{
-                    output += " " + printPuyo(Puyo.createBlack());
+                    output += printPuyo(Puyo.createBlack());
                 }
             }
             output += " |\n";

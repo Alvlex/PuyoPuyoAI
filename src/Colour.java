@@ -1,4 +1,4 @@
-public enum Attribute {
+public enum Colour {
     RED(31),
     GREEN(32),
     YELLOW(33),
@@ -8,7 +8,7 @@ public enum Attribute {
     BLACK(30);
 
     int value;
-    Attribute(int i) {
+    Colour(int i) {
         this.value = i;
     }
 }
