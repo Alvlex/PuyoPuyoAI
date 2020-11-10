@@ -102,13 +102,6 @@ class Chain {
     }
 
     ArrayList<int[]> chainTurn(ArrayList<int[]> recentlyDropped){
-        Scanner x = new Scanner(System.in);
-        int input = 0;
-        Output.printBoard(board);
-        while(input != 5) {
-            System.out.println("Pick an action:\n(5) End turn");
-            input = x.nextInt();
-        }
         ArrayList<ArrayList<int[]>> groups = findPops(recentlyDropped);
         int totalPuyo = 0;
         for (ArrayList<int[]> group: groups){
@@ -127,7 +120,7 @@ class Chain {
             accumulator += (i + 1) * (chain.get(i) - 4);
         }
         int output = accumulator + 3 * (chain.size() - 1) * chain.size();
-        chain.clear();
+        resetChain(); // If we're dropping Puyo, then we can't be in the middle of a chain
         return output;
     }
 

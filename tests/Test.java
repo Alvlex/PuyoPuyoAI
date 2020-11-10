@@ -14,8 +14,29 @@ public class Test {
 
     public static void main(String[] args){
         Test t = new Test(new File("testPatterns"));
-        Game g = new Game(new Board(t.boards.get(0)), t.recentlyDropped.get(0));
-        g.playSinglePlayer();
+//        t.testSinglePlayer();
+        t.testMultiPlayer();
+//        t.testDoubleOutput();
+    }
+
+    void testSinglePlayer(){
+        Game g = new Game(new Board(boards.get(0)), recentlyDropped.get(0));
+        g.play();
+    }
+
+    void testMultiPlayer(){
+        Board b = new Board(boards.get(0));
+        Game g = new Game(new Board[]{b.copyBoard(), b.copyBoard()}, new ArrayList[]{recentlyDropped.get(0), recentlyDropped.get(0)});
+        g.play();
+    }
+
+    void testDoubleOutput(){
+        Board b = new Board(boards.get(0));
+        Output output = new Output(new Board[]{b,b});
+        output.updateCurrentPuyo(Puyo.createInitialPuyo(), 0);
+        output.updateCurrentPuyo(Puyo.createInitialPuyo(), 1);
+        output.printCurrentPuyo();
+        output.printBoards();
     }
 
     void processFile(File f){

@@ -1,15 +1,21 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class Player {
+class Player {
     Puyo[][] currentPuyo;
     Board board;
+    private int playerNo;
+    private Output output;
+    Chain chain;
 
-    public Player(Board g){
+    Player(Board b, int playerNo, Output output){
         currentPuyo = Puyo.createInitialPuyo();
-        board = g;
+        board = b;
+        this.playerNo = playerNo;
+        this.output = output;
+        this.output.updateCurrentPuyo(currentPuyo, playerNo);
+        chain = new Chain(board);
     }
 
     private void getNextPuyo(){
@@ -20,13 +26,13 @@ public class Player {
 
     Move turn(){
         Move move = new Move();
-        getNextPuyo();
         Scanner x = new Scanner(System.in);
         int input = 0;
         while(true) {
             while (input != 5) {
-                Output.printCurrentPuyo(currentPuyo, move);
-                Output.printBoard(board);
+                output.updateMoves(move, playerNo);
+                output.printCurrentPuyo();
+                output.printBoards();
                 System.out.println("Pick an action:\n(1) Move left\n(2) Move right\n(3) Rotate clockwise\n" +
                         "(4) Rotate counter-clockwise\n(5) End turn");
                 input = x.nextInt();
@@ -51,6 +57,7 @@ public class Player {
                 System.out.println("Can't place puyo there!");
             }
         }
+        getNextPuyo();
         return move;
     }
 

@@ -1,21 +1,15 @@
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 class Board {
 
     private Puyo[][] board;
-    Chain chain;
 
     Board(){
         board = new Puyo[6][13];
-        chain = new Chain(this);
     }
 
     Board(Puyo[][] board){
         this.board = board;
-        chain = new Chain(this);
     }
 
     // Returns true if successfully added, otherwise false
@@ -56,7 +50,6 @@ class Board {
         // remove the first one and then return false
         int dropped = -1; // This records the index of the first dropped Puyo
         int[][] coords = m.getCoord();
-        chain.resetChain(); // If we're dropping Puyo, then we can't be in the middle of a chain
         for (int i = 1; i >= 0; i --){
             for (int j = 0; j < 2; j ++){
                 if (coords[j][1] == i){
@@ -98,6 +91,16 @@ class Board {
         return dropped;
     }
     // TODO Need to write a unit test to test for if multiple gaps of pops along the same column cascade right
+
+    Board copyBoard(){
+        Puyo[][] result = new Puyo[board.length][board[0].length];
+        for (int i = 0; i < board.length; i ++){
+            for (int j = 0; j < board[i].length; j ++){
+                result[i][j] = getPuyo(i,j);
+            }
+        }
+        return new Board(result);
+    }
 
     Puyo getPuyo(int col, int row){
         if (board[col][row] == null)
