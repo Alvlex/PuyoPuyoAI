@@ -1,3 +1,8 @@
+package app;
+
+import AI.HumanStrategy;
+import AI.RandomStrategy;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -5,6 +10,7 @@ public class Game {
     private Player[] players;
     private ArrayList<int[]>[] recentlyDropped;
     Output output;
+    int turn = 0;
 
     private Game(int noOfBoards){
         Board[] b = new Board[noOfBoards];
@@ -16,11 +22,11 @@ public class Game {
         setup(b, al);
     }
 
-    Game(Board b, ArrayList<int[]> startChain){
+    public Game(Board b, ArrayList<int[]> startChain){
         setup(new Board[]{b}, new ArrayList[]{startChain});
     }
 
-    Game(Board[] b, ArrayList<int[]>[] startChain){
+    public Game(Board[] b, ArrayList<int[]>[] startChain){
         setup(b, startChain);
     }
 
@@ -33,66 +39,66 @@ public class Game {
         recentlyDropped = startChain;
     }
 
-    void playSinglePlayer(){
-        Scanner x = new Scanner(System.in);
+    int playSinglePlayer(int noOfTurns){
+        int max = 0;
         boolean popping = players[0].chain.isPopping(recentlyDropped[0]);
-        while(!players[0].board.checkEnd()) {
+        while(players[0].board.checkPossibilities() && turn < noOfTurns) {
             if (popping) {
-                output.printBoards();
-                System.out.println("Press 1 to proceed");
-                int input = x.nextInt();
-                while (input != 1) {
-                    input = x.nextInt();
-                }
+                System.out.println(output.printBoards());
             }
             popping = singlePlayerHelper(0, popping);
+            if (!popping){
+                max = Math.max(players[0].chain.score(), max);
+                players[0].chain.resetChain();
+            }
             updateTurn();
         }
-        output.printBoards();
+        System.out.println(output.printBoards());
         System.out.println("GAME OVER");
+        return max;
     }
 
     private boolean singlePlayerHelper(int playerNo, boolean popping){
         if (!popping) {
-            System.out.println("Player " + (playerNo + 1) + "'s turn!" );
-            Move m = players[playerNo].turn();
+            Move m = players[playerNo].turn(new HumanStrategy(output, playerNo));
             popping = players[playerNo].chain.isPopping(players[playerNo].findRecentlyDropped(m));
             recentlyDropped[playerNo].clear();
             recentlyDropped[playerNo].addAll(players[playerNo].findRecentlyDropped(m));
+            players[playerNo].garbage.dropGarbage();
         } else {
             System.out.println("Player " + (playerNo + 1) + " has a " + (players[playerNo].chain.chainLength() + 1) + "-Chain!");
             // Implement chaining
             recentlyDropped[playerNo] = players[playerNo].chain.chainTurn(recentlyDropped[playerNo]);
             popping = players[playerNo].chain.isPopping(recentlyDropped[playerNo]);
-            if (!popping) {
-                // Do something with score
-                players[playerNo].chain.score();
-            }
         }
         return popping;
     }
 
-    private void playMultiPlayer(){
-        Scanner x = new Scanner(System.in);
+    private void playMultiPlayer(int noOfTurns){
         boolean[] popping = new boolean[2];
         popping[0] = players[0].chain.isPopping(recentlyDropped[0]);
         popping[1] = players[1].chain.isPopping(recentlyDropped[1]);
-        while(!players[0].board.checkEnd() && !players[1].board.checkEnd()) {
+        while(players[0].board.checkPossibilities() && players[1].board.checkPossibilities() && turn < noOfTurns) {
             if (popping[0] && popping[1]) {
-                output.printCurrentPuyo();
-                output.printBoards();
-                System.out.println("Press 1 to proceed");
-                int input = x.nextInt();
-                while (input != 1) {
-                    input = x.nextInt();
-                }
+                System.out.println(output.printBoards());
             }
+            int[] scores = new int[2];
             for (int playerNo = 0; playerNo < players.length; playerNo ++) {
                 popping[playerNo] = singlePlayerHelper(playerNo, popping[playerNo]);
+                if (!popping[playerNo]) {
+                    scores[playerNo] = players[playerNo].chain.score();
+                    players[playerNo].chain.resetChain();
+                }
+            }
+            for (int playerNo = 0; playerNo < players.length; playerNo ++){
+                if (scores[playerNo] > 0) {
+                    scores[playerNo] = players[playerNo].garbage.removeGarbage(scores[playerNo]);
+                    players[playerNo].garbage.makeGarbage(scores[1 - playerNo]);
+                }
             }
             updateTurn();
         }
-        output.printBoards();
+        System.out.println(output.printBoards());
         System.out.println("GAME OVER");
     }
 
@@ -101,14 +107,24 @@ public class Game {
             output.updateCurrentPuyo(players[i].currentPuyo, i);
             output.updateBoard(players[i].board, i);
         }
+        turn ++;
     }
 
-    void play(){
+    private void play(){
         if (players.length == 1){
-            playSinglePlayer();
+            playSinglePlayer(Integer.MAX_VALUE);
         }
         else{
-            playMultiPlayer();
+            playMultiPlayer(Integer.MAX_VALUE);
+        }
+    }
+
+    public int play(int noOfTurns){
+        if (players.length == 1) {
+            return playSinglePlayer(noOfTurns);
+        } else {
+            playMultiPlayer(noOfTurns);
+            return 0;
         }
     }
 

@@ -1,3 +1,5 @@
+package app;
+
 public enum Colour {
     RED(31),
     GREEN(32),

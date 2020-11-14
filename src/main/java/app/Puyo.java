@@ -1,17 +1,19 @@
+package app;
+
 import java.util.Random;
 
 public class Puyo {
     Colour colour;
 
-    Puyo(Colour colour){
+    public Puyo(Colour colour){
         this.colour = colour;
     }
 
-    public Puyo copyPuyo(){
+    Puyo copyPuyo(){
         return new Puyo(colour);
     }
 
-    public static Puyo[] create2Puyo(){
+    static Puyo[] create2Puyo(){
         Random x = new Random();
         int rand1 = x.nextInt(Colour.values().length - 3);
         int rand2 = x.nextInt(Colour.values().length - 3);
@@ -33,5 +35,9 @@ public class Puyo {
 
     public static Puyo createGarbage(){
         return new Puyo(Colour.GREY);
+    }
+
+    public String getColour(){
+        return colour.name();
     }
 }

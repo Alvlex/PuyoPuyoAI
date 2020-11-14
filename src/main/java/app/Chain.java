@@ -1,18 +1,20 @@
+package app;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-class Chain {
+public class Chain implements ChainI{
 
     private Board board;
     private ArrayList<Integer> chain;
 
-    Chain(Board board){
+    public Chain(Board board){
         this.board = board;
         chain = new ArrayList<>();
     }
 
-    void resetChain(){
+    @Override
+    public void resetChain(){
         chain.clear();
     }
 
@@ -51,7 +53,7 @@ class Chain {
                     break;
                 }
             }
-            if (skip) continue;
+            if (skip || board.getPuyo(pos).getColour().equals("GREY")) continue;
             ArrayList<int[]> connected = new ArrayList<>();
             connected.add(pos);
             ArrayList<int[]> toCheck = findAdjacent(pos[0], pos[1]);
@@ -82,7 +84,8 @@ class Chain {
         return false;
     }
 
-    boolean isPopping(List<int[]> recentlyDropped){
+    @Override
+    public boolean isPopping(List<int[]> recentlyDropped){
         return popIncoming(findPops(recentlyDropped));
     }
 
@@ -101,7 +104,8 @@ class Chain {
         }
     }
 
-    ArrayList<int[]> chainTurn(ArrayList<int[]> recentlyDropped){
+    @Override
+    public ArrayList<int[]> chainTurn(ArrayList<int[]> recentlyDropped){
         ArrayList<ArrayList<int[]>> groups = findPops(recentlyDropped);
         int totalPuyo = 0;
         for (ArrayList<int[]> group: groups){
@@ -114,17 +118,18 @@ class Chain {
         return board.cascadePuyo();
     }
 
-    int score(){
+    @Override
+    public int score(){
         int accumulator = 0;
         for (int i = 0; i < chain.size(); i ++){
             accumulator += (i + 1) * (chain.get(i) - 4);
         }
         int output = accumulator + 3 * (chain.size() - 1) * chain.size();
-        resetChain(); // If we're dropping Puyo, then we can't be in the middle of a chain
         return output;
     }
 
-    int chainLength(){
+    @Override
+    public int chainLength(){
         return chain.size();
     }
 

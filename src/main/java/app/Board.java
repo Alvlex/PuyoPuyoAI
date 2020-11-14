@@ -1,14 +1,16 @@
+package app;
+
 import java.util.ArrayList;
 
-class Board {
+public class Board implements BoardI{
 
     private Puyo[][] board;
 
-    Board(){
+    public Board(){
         board = new Puyo[6][13];
     }
 
-    Board(Puyo[][] board){
+    public Board(Puyo[][] board){
         this.board = board;
     }
 
@@ -20,7 +22,12 @@ class Board {
                 return true;
             }
         }
-        return checkEnd();
+        return false;
+    }
+
+    @Override
+    public void dropGarbage(int col){
+        dropPuyoHelper(Puyo.createGarbage(), col);
     }
 
     private void removePuyo(int col){
@@ -32,16 +39,8 @@ class Board {
         }
     }
 
-    boolean checkEnd(){
-        for (Puyo[] col : board) {
-            if (col[col.length - 1] == null) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    boolean dropPuyo(Puyo[] puyos, Move m){
+    @Override
+    public boolean dropPuyo(Puyo[] puyos, Move m){
         // Only can ever have 2 puyos here, and can fail
         // if either Puyo drops into a full column
         // If the first one drops into a full column, then
@@ -67,7 +66,8 @@ class Board {
         return true;
     }
 
-    ArrayList<int[]> cascadePuyo(){
+    @Override
+    public ArrayList<int[]> cascadePuyo(){
         ArrayList<int[]> dropped = new ArrayList<>();
         for (int col = 0; col < getNoCols(); col ++){
             int noOfSpaces = 0;
@@ -83,16 +83,16 @@ class Board {
                             dropped.add(new int[]{col, i - noOfSpaces});
                         }
                     }
+                    row -= noOfSpaces + 1;
                     noOfSpaces = 0;
-                    row -= noOfSpaces - 1;
                 }
             }
         }
         return dropped;
     }
-    // TODO Need to write a unit test to test for if multiple gaps of pops along the same column cascade right
 
-    Board copyBoard(){
+    @Override
+    public Board copyBoard(){
         Puyo[][] result = new Puyo[board.length][board[0].length];
         for (int i = 0; i < board.length; i ++){
             for (int j = 0; j < board[i].length; j ++){
@@ -102,30 +102,37 @@ class Board {
         return new Board(result);
     }
 
-    Puyo getPuyo(int col, int row){
+    @Override
+    public Puyo getPuyo(int col, int row){
         if (board[col][row] == null)
             return null;
         return board[col][row].copyPuyo();
     }
-    Puyo getPuyo(int[] pos){
+    @Override
+    public Puyo getPuyo(int[] pos){
         return getPuyo(pos[0], pos[1]);
     }
 
-    int getNoCols(){
+    @Override
+    public int getNoCols(){
         return board.length;
     }
-    int getNoRows(){
+    @Override
+    public int getNoRows(){
         return board[0].length;
     }
 
-    void removePuyo(int col, int row){
+    @Override
+    public void removePuyo(int col, int row){
         board[col][row] = null;
     }
-    void removePuyo(int[] pos){
+    @Override
+    public void removePuyo(int[] pos){
         board[pos[0]][pos[1]] = null;
     }
 
-    int peekCol(int col){
+    @Override
+    public int peekCol(int col){
         for (int row = getNoRows() - 1; row >= 0; row --){
             if (board[col][row] != null){
                 return row;
@@ -133,5 +140,27 @@ class Board {
         }
         // Should only be called to find the highest row with a Puyo in it
         return -1;
+    }
+
+    @Override
+    public boolean checkPossibilities() {
+        // 11 Possibilities, 5 horizontal and 6 vertical
+        for (int i = 0; i < 6; i ++){
+            if (dropPuyoHelper(Puyo.createGarbage(), i)) {
+                boolean flag = false;
+                if (dropPuyoHelper(null, i)){
+                    flag = true;
+                }
+                removePuyo(i, peekCol(i));
+                if (flag)
+                    return true;
+            }
+        }
+        for (int i = 0; i < 5; i ++){
+            if (dropPuyoHelper(null, i) && dropPuyoHelper(null, i + 1)){
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,10 +1,12 @@
-class Output {
+package app;
+
+public class Output implements OutputI{
 
     Board[] boards;
     Puyo[][][] currentPuyo;
     Move[] moves;
 
-    Output(Board[] boards){
+    public Output(Board[] boards){
         Board[] boardCopies = new Board[boards.length];
         for (int i = 0; i < boards.length; i ++){
             boardCopies[i] = boards[i].copyBoard();
@@ -17,11 +19,11 @@ class Output {
         currentPuyo = new Puyo[boards.length][][];
     }
 
-    void updateBoard(Board b, int playerNo){
+    public void updateBoard(Board b, int playerNo){
         boards[playerNo] = b.copyBoard();
     }
 
-    void updateCurrentPuyo(Puyo[][] currentPuyo, int playerNo){
+    public void updateCurrentPuyo(Puyo[][] currentPuyo, int playerNo){
         Puyo[][] currentPuyoCopy = new Puyo[currentPuyo.length][currentPuyo[0].length];
         for (int i = 0; i < currentPuyoCopy.length; i ++){
             for (int j = 0; j < currentPuyoCopy[j].length; j ++){
@@ -31,7 +33,7 @@ class Output {
         this.currentPuyo[playerNo] = currentPuyoCopy;
     }
 
-    void updateMoves(Move m, int playerNo){
+    public void updateMoves(Move m, int playerNo){
         this.moves[playerNo] = m;
     }
 
@@ -41,7 +43,7 @@ class Output {
         return " " + output;
     }
 
-    void printCurrentPuyo(){
+    public String printCurrentPuyo(){
         String output = "";
         for (int i = 0; i < 2; i ++){
             for (int boardNo = 0; boardNo < boards.length; boardNo ++) {
@@ -64,10 +66,10 @@ class Output {
             }
             output += "\n";
         }
-        System.out.print(output);
+        return output;
     }
 
-    void printBoards(){
+    public String printBoards(){
         String output = "";
         for (int row = boards[0].getNoRows() - 1; row >= 0; row --){
             for (int boardNo = 0; boardNo < boards.length; boardNo ++) {
@@ -83,6 +85,6 @@ class Output {
             }
             output += "\n";
         }
-        System.out.println(output);
+        return output;
     }
 }

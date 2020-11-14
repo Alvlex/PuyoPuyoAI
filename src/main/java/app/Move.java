@@ -1,4 +1,6 @@
-public class Move {
+package app;
+
+public class Move implements MoveI{
     private int col; // Can only be between 0 and 5
     private int rot; // 0 means 2nd Puyo is below
                      // 1 means 2nd Puyo is to the left
@@ -8,6 +10,22 @@ public class Move {
     public Move(){
         col = 2;
         rot = 0;
+    }
+
+    public Move(int col, int rot){
+        if (0 <= col && col < 6){
+            this.col = col;
+        }
+        else{
+            this.col = 2;
+        }
+        if (0 <= rot && rot < 4){
+            this.rot = rot;
+        }
+        else{
+            rot = 0;
+        }
+        rotHelper();
     }
 
     public void left(){
