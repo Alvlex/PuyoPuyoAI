@@ -38,8 +38,8 @@ public class appTest {
     public void testDoubleOutput(){
         Board b = new Board(boards.get(0));
         Output output = new Output(new Board[]{b,b});
-        output.updateCurrentPuyo(Puyo.createInitialPuyo(), 0);
-        output.updateCurrentPuyo(Puyo.createInitialPuyo(), 1);
+        output.updateCurrentPuyo(PuyoI.createInitialPuyo(4), 0);
+        output.updateCurrentPuyo(PuyoI.createInitialPuyo(4), 1);
         output.printCurrentPuyo();
         output.printBoards();
     }
@@ -132,7 +132,7 @@ public class appTest {
             case '_':
                 return null;
             case 'N':
-                return Puyo.createGarbage();
+                return PuyoI.createGarbage();
             case 'Y':
                 return new Puyo(Colour.YELLOW);
             case 'R':

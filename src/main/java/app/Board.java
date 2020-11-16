@@ -27,7 +27,7 @@ public class Board implements BoardI{
 
     @Override
     public void dropGarbage(int col){
-        dropPuyoHelper(Puyo.createGarbage(), col);
+        dropPuyoHelper(PuyoI.createGarbage(), col);
     }
 
     private void removePuyo(int col){
@@ -146,7 +146,7 @@ public class Board implements BoardI{
     public boolean checkPossibilities() {
         // 11 Possibilities, 5 horizontal and 6 vertical
         for (int i = 0; i < 6; i ++){
-            if (dropPuyoHelper(Puyo.createGarbage(), i)) {
+            if (dropPuyoHelper(PuyoI.createGarbage(), i)) {
                 boolean flag = false;
                 if (dropPuyoHelper(null, i)){
                     flag = true;

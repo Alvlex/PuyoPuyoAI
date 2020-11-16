@@ -34,7 +34,7 @@ public class Game {
         players = new Player[b.length];
         output = new Output(b);
         for (int i = 0; i < players.length; i ++) {
-            players[i] = new Player(b[i], i, output);
+            players[i] = new Player(b[i], 4);
         }
         recentlyDropped = startChain;
     }

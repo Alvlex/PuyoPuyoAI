@@ -3,6 +3,7 @@ package appTest;
 import app.Board;
 import app.Puyo;
 import app.Chain;
+import app.PuyoI;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class unitTestsChain {
         Puyo[][] full = new Puyo[6][13];
         for (int i = 0; i < 6; i ++){
             for (int j = 0; j < 13; j ++){
-                full[i][j] = Puyo.createGarbage();
+                full[i][j] = PuyoI.createGarbage();
             }
         }
         this.full = new Chain(new Board(full));
@@ -66,7 +67,7 @@ public class unitTestsChain {
         Assert.assertTrue(empty.chainTurn(new ArrayList<>()).isEmpty());
 
         unitTestsBoard utb = new unitTestsBoard();
-        utb.compareBoards(resultBoard, customBoardCopy);
+        utb.assertEqualBoards(resultBoard, customBoardCopy);
     }
 
     @Test

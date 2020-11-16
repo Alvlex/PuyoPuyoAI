@@ -2,9 +2,9 @@ package app;
 
 public class Output implements OutputI{
 
-    Board[] boards;
-    Puyo[][][] currentPuyo;
-    Move[] moves;
+    private Board[] boards;
+    private Puyo[][][] currentPuyo;
+    private Move[] moves;
 
     public Output(Board[] boards){
         Board[] boardCopies = new Board[boards.length];
@@ -59,7 +59,7 @@ public class Output implements OutputI{
                         }
                     }
                     if (!contentAdded)
-                        output += printPuyo(Puyo.createBlack());
+                        output += printPuyo(PuyoI.createBlack());
                 }
                 output += "   " + printPuyo(currentPuyo[boardNo][1][i]) + " " + printPuyo(currentPuyo[boardNo][2][i]);
                 output += "     ";
@@ -78,10 +78,10 @@ public class Output implements OutputI{
                     if (boards[boardNo].getPuyo(col, row) != null) {
                         output += printPuyo(boards[boardNo].getPuyo(col, row));
                     } else {
-                        output += printPuyo(Puyo.createBlack());
+                        output += printPuyo(PuyoI.createBlack());
                     }
                 }
-                output += " | " + printPuyo(Puyo.createBlack()) + " " + printPuyo(Puyo.createBlack()) + "     ";
+                output += " | " + printPuyo(PuyoI.createBlack()) + " " + printPuyo(PuyoI.createBlack()) + "     ";
             }
             output += "\n";
         }

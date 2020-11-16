@@ -15,7 +15,7 @@ public class unitTestsBoard {
         Puyo[][] full = new Puyo[6][13];
         for (int i = 0; i < 6; i ++){
             for (int j = 0; j < 13; j ++){
-                full[i][j] = Puyo.createGarbage();
+                full[i][j] = PuyoI.createGarbage();
             }
         }
         this.full = new Board(full);
@@ -76,10 +76,10 @@ public class unitTestsBoard {
         }
         Board b = new Board(temp);
         b.cascadePuyo();
-        compareBoards(b, new Board(result));
+        assertEqualBoards(b, new Board(result));
     }
 
-    void compareBoards(Board b1, Board b2){
+    void assertEqualBoards(Board b1, Board b2){
         for (int i = 0; i < 6; i ++){
             for (int j = 0; j < 13; j ++){
                 if (b1.getPuyo(i,j) == null || b2.getPuyo(i,j) == null){
@@ -96,8 +96,8 @@ public class unitTestsBoard {
     public void copyBoardTest(){
         Board emptyCopy = empty.copyBoard();
         Board fullCopy = full.copyBoard();
-        compareBoards(emptyCopy, empty);
-        compareBoards(fullCopy, full);
+        assertEqualBoards(emptyCopy, empty);
+        assertEqualBoards(fullCopy, full);
         for (int i = 0; i < 6; i ++){
             for (int j = 0; j < 13; j ++){
                 if (emptyCopy.getPuyo(i,j) != null){

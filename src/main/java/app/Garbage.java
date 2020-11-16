@@ -9,7 +9,7 @@ public class Garbage implements GarbageI{
     private Board board;
     private int garbage = 0;
 
-    Garbage(Board b){
+    public Garbage(Board b){
         board = b;
     }
 
@@ -21,7 +21,7 @@ public class Garbage implements GarbageI{
         ArrayList<Integer> columns = new ArrayList<>(Arrays.asList(0,1,2,3,4,5));
         Random x = new Random();
         while(garbage > 0){
-            int nextCol = columns.get(x.nextInt(columns.size()));
+            int nextCol = columns.remove(x.nextInt(columns.size()));
             if (columns.size() == 0){
                 columns = new ArrayList<>(Arrays.asList(0,1,2,3,4,5));
             }

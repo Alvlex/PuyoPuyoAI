@@ -39,12 +39,12 @@ public class Move implements MoveI{
     }
 
     public void rotClock(){
-        rot = (rot + 1) % 4;
+        rot = (rot + 3) % 4;
         rotHelper();
     }
 
     public void rotAnti(){
-        rot = (rot + 3) % 4;
+        rot = (rot + 1) % 4;
         rotHelper();
     }
 
