@@ -146,4 +146,10 @@ public class appTest {
         }
         return null;
     }
+
+    // Tests to implement:
+    // Popping neighbouring garbage
+    // Garbage system stuff:
+    // - Correctly displacing incoming garbage if there's a chain
+    // - Correctly calculating how much garbage
 }

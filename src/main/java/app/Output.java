@@ -44,29 +44,29 @@ public class Output implements OutputI{
     }
 
     public String printCurrentPuyo(){
-        String output = "";
+        StringBuilder output = new StringBuilder();
         for (int i = 0; i < 2; i ++){
             for (int boardNo = 0; boardNo < boards.length; boardNo ++) {
                 int[][] coords = moves[boardNo].getCoord();
-                output += " ";
+                output.append(" ");
                 for (int j = 0; j < 6; j++) {
                     boolean contentAdded = false;
                     for (int k = 0; k < 2; k++) {
                         if (coords[k][0] == j && coords[k][1] == i) {
-                            output += printPuyo(currentPuyo[boardNo][0][k]);
+                            output.append(printPuyo(currentPuyo[boardNo][0][k]));
                             contentAdded = true;
                             break;
                         }
                     }
                     if (!contentAdded)
-                        output += printPuyo(PuyoI.createBlack());
+                        output.append(printPuyo(PuyoI.createBlack()));
                 }
-                output += "   " + printPuyo(currentPuyo[boardNo][1][i]) + " " + printPuyo(currentPuyo[boardNo][2][i]);
-                output += "     ";
+                output.append("   ").append(printPuyo(currentPuyo[boardNo][1][i])).append(" ").append(printPuyo(currentPuyo[boardNo][2][i]));
+                output.append("     ");
             }
-            output += "\n";
+            output.append("\n");
         }
-        return output;
+        return output.toString();
     }
 
     public String printBoards(){

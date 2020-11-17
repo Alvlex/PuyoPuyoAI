@@ -2,47 +2,51 @@ package app;
 
 import AI.HumanStrategy;
 import AI.RandomStrategy;
+import AI.Strategy;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Game {
     private Player[] players;
     private ArrayList<int[]>[] recentlyDropped;
-    Output output;
-    int turn = 0;
+    private Output output;
+    private int turn = 0;
 
-    private Game(int noOfBoards){
-        Board[] b = new Board[noOfBoards];
-        ArrayList[] al = new ArrayList[noOfBoards];
-        for (int i = 0; i < noOfBoards; i ++){
+    private Game(Strategy[] strategies){
+        Board[] b = new Board[strategies.length];
+        ArrayList[] al = new ArrayList[strategies.length];
+        for (int i = 0; i < strategies.length; i ++){
             b[i] = new Board();
             al[i] = new ArrayList<int[]>();
         }
-        setup(b, al);
+        setup(b, al, strategies);
     }
 
     public Game(Board b, ArrayList<int[]> startChain){
-        setup(new Board[]{b}, new ArrayList[]{startChain});
+        setup(new Board[]{b}, new ArrayList[]{startChain}, new Strategy[]{new RandomStrategy()});
     }
 
     public Game(Board[] b, ArrayList<int[]>[] startChain){
-        setup(b, startChain);
+        setup(b, startChain, new Strategy[]{new RandomStrategy(), new RandomStrategy()});
     }
 
-    private void setup(Board[] b, ArrayList<int[]>[] startChain){
+    private void setup(Board[] b, ArrayList<int[]>[] startChain, Strategy[] strategies){
         players = new Player[b.length];
         output = new Output(b);
         for (int i = 0; i < players.length; i ++) {
-            players[i] = new Player(b[i], 4);
+            players[i] = new Player(b[i], 4, strategies[i]);
+            if (strategies[i] instanceof HumanStrategy){
+                ((HumanStrategy) strategies[i]).updateOutput(output);
+            }
         }
         recentlyDropped = startChain;
     }
 
-    int playSinglePlayer(int noOfTurns){
+    private int playSinglePlayer(int noOfTurns){
         int max = 0;
         boolean popping = players[0].chain.isPopping(recentlyDropped[0]);
         while(players[0].board.checkPossibilities() && turn < noOfTurns) {
+            updateTurn();
             if (popping) {
                 System.out.println(output.printBoards());
             }
@@ -51,8 +55,8 @@ public class Game {
                 max = Math.max(players[0].chain.score(), max);
                 players[0].chain.resetChain();
             }
-            updateTurn();
         }
+        updateTurn();
         System.out.println(output.printBoards());
         System.out.println("GAME OVER");
         return max;
@@ -60,7 +64,7 @@ public class Game {
 
     private boolean singlePlayerHelper(int playerNo, boolean popping){
         if (!popping) {
-            Move m = players[playerNo].turn(new HumanStrategy(output, playerNo));
+            Move m = players[playerNo].turn();
             popping = players[playerNo].chain.isPopping(players[playerNo].findRecentlyDropped(m));
             recentlyDropped[playerNo].clear();
             recentlyDropped[playerNo].addAll(players[playerNo].findRecentlyDropped(m));
@@ -79,6 +83,7 @@ public class Game {
         popping[0] = players[0].chain.isPopping(recentlyDropped[0]);
         popping[1] = players[1].chain.isPopping(recentlyDropped[1]);
         while(players[0].board.checkPossibilities() && players[1].board.checkPossibilities() && turn < noOfTurns) {
+            updateTurn();
             if (popping[0] && popping[1]) {
                 System.out.println(output.printBoards());
             }
@@ -93,11 +98,11 @@ public class Game {
             for (int playerNo = 0; playerNo < players.length; playerNo ++){
                 if (scores[playerNo] > 0) {
                     scores[playerNo] = players[playerNo].garbage.removeGarbage(scores[playerNo]);
-                    players[playerNo].garbage.makeGarbage(scores[1 - playerNo]);
+                    players[1 - playerNo].garbage.makeGarbage(scores[playerNo]);
                 }
             }
-            updateTurn();
         }
+        updateTurn();
         System.out.println(output.printBoards());
         System.out.println("GAME OVER");
     }
@@ -129,7 +134,7 @@ public class Game {
     }
 
     public static void main(String[] args){
-        Game g = new Game(2);
+        Game g = new Game(new Strategy[]{new HumanStrategy(0), new RandomStrategy()});
         g.play();
     }
 }

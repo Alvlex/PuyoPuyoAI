@@ -13,10 +13,9 @@ public class unitTestsPlayer {
     @Test
     public void turnTest(){
         Board b = new Board();
-        Player p = new Player(b,  4);
-        RandomStrategy rs = new RandomStrategy();
+        Player p = new Player(b,  4, new RandomStrategy());
         Puyo[][] pastPuyo = copyPuyoList(p.currentPuyo);
-        p.turn(rs);
+        p.turn();
         Assert.assertTrue(assertBoardsDifferent(new Board(), b));
         Assert.assertTrue(assertListsDifferent(pastPuyo, p.currentPuyo));
 
@@ -25,10 +24,9 @@ public class unitTestsPlayer {
     @Test
     public void findRecentlyDroppedTest(){
         Board b = new Board();
-        Player p = new Player(b, 4);
+        Player p = new Player(b, 4, new RandomStrategy());
         Random x = new Random();
-        RandomStrategy rs = new RandomStrategy();
-        Move m = p.turn(rs);
+        Move m = p.turn();
         int[][] coords = m.getCoord();
         List<int[]> test = p.findRecentlyDropped(m);
         if (coords[0][1] == 1 || coords[1][1] == 1){

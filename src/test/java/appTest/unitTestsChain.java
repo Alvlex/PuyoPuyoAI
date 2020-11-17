@@ -1,5 +1,7 @@
 package appTest;
 
+//TODO Need to make these tests more generic
+
 import app.Board;
 import app.Puyo;
 import app.Chain;
@@ -15,9 +17,8 @@ public class unitTestsChain {
 
     private Chain empty;
     private Chain full;
-    private Board customBoard;
-    private Chain custom;
-    private ArrayList<int[]> customRecDrop;
+    private ArrayList<Puyo[][]> customBoards;
+    private ArrayList<ArrayList<int[]>> customRecDrop;
     private ArrayList<int[]> fullRecentlyDropped;
 
     @Before
@@ -32,9 +33,8 @@ public class unitTestsChain {
         this.full = new Chain(new Board(full));
         appTest at = new appTest();
         ArrayList<String> lines = at.readFile(new File("testPatterns.csv"));
-        customBoard = new Board(at.readBoards(lines).get(1));
-        custom = new Chain(customBoard);
-        customRecDrop = at.readRecentlyDropped(lines).get(1);
+        customBoards = at.readBoards(lines);
+        customRecDrop = at.readRecentlyDropped(lines);
         fullRecentlyDropped = new ArrayList<>();
         for (int i = 0; i < 6; i ++){
             for (int j = 0; j < 13; j ++){
@@ -47,14 +47,15 @@ public class unitTestsChain {
     public void isPoppingTest(){
         Assert.assertFalse(empty.isPopping(new ArrayList<>()));
         Assert.assertFalse(full.isPopping(fullRecentlyDropped));
-        Assert.assertTrue(custom.isPopping(customRecDrop));
+        Assert.assertTrue(new Chain(new Board(customBoards.get(1))).isPopping(customRecDrop.get(1)));
     }
 
     @Test
     public void chainTurnTest(){
-        Board customBoardCopy = customBoard.copyBoard();
+        Board b = new Board(customBoards.get(1));
+        Board customBoardCopy = b.copyBoard();
         Chain customCopy = new Chain(customBoardCopy);
-        Board resultBoard = customBoard.copyBoard();
+        Board resultBoard = b.copyBoard();
 
         resultBoard.removePuyo(4,0);
         resultBoard.removePuyo(3,0);
@@ -62,7 +63,7 @@ public class unitTestsChain {
         resultBoard.removePuyo(3,2);
         resultBoard.cascadePuyo();
 
-        Assert.assertArrayEquals(new int[]{3,0}, customCopy.chainTurn(customRecDrop).get(0));
+        Assert.assertArrayEquals(new int[]{3,0}, customCopy.chainTurn(customRecDrop.get(1)).get(0));
         Assert.assertTrue(full.chainTurn(fullRecentlyDropped).isEmpty());
         Assert.assertTrue(empty.chainTurn(new ArrayList<>()).isEmpty());
 
@@ -72,12 +73,14 @@ public class unitTestsChain {
 
     @Test
     public void scoreTest(){
-        Chain customCopy = new Chain(customBoard.copyBoard());
-        ArrayList<int[]> recentlyDropped = customRecDrop;
-        int[] scores = {0, 6, 18, 36};
-        for (int i = 0; i < 4; i ++){
-            recentlyDropped = customCopy.chainTurn(recentlyDropped);
-            Assert.assertEquals(customCopy.score(), scores[i]);
+        int[] scores = {0, 36, 3};
+        for (int j = 0; j < customBoards.size(); j ++) {
+            Chain customCopy = new Chain(new Board(customBoards.get(j)));
+            ArrayList<int[]> recentlyDropped = customRecDrop.get(j);
+            while(customCopy.isPopping(recentlyDropped)){
+                recentlyDropped = customCopy.chainTurn(recentlyDropped);
+            }
+            Assert.assertEquals(customCopy.score(), scores[j]);
         }
     }
 }

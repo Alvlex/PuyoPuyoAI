@@ -15,6 +15,14 @@ public class HumanStrategy implements Strategy{
         this.output = output;
         this.playerNo = playerNo;
     }
+
+    public HumanStrategy(int playerNo){
+        this.playerNo = playerNo;
+    }
+
+    public void updateOutput(Output output){
+        this.output = output;
+    }
     @Override
     public Move makeMove(Board b, Puyo[][] currentPuyo) {
         System.out.println("Player " + (playerNo + 1) + "'s turn!" );

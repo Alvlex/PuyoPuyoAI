@@ -5,6 +5,6 @@ import AI.Strategy;
 import java.util.List;
 
 public interface PlayerI {
-    Move turn(Strategy s);
+    Move turn();
     List<int[]> findRecentlyDropped(Move m);
 }
