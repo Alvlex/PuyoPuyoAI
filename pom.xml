@@ -17,5 +17,17 @@
             <artifactId>junit</artifactId>
             <version>4.13.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.2</version>
+        </dependency>
     </dependencies>
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/testTemplates</directory>
+            </testResource>
+        </testResources>
+    </build>
 </project>

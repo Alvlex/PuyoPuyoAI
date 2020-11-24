@@ -79,7 +79,7 @@ public class unitTestsBoard {
         assertEqualBoards(b, new Board(result));
     }
 
-    void assertEqualBoards(Board b1, Board b2){
+    boolean equalBoards(Board b1, Board b2){
         for (int i = 0; i < 6; i ++){
             for (int j = 0; j < 13; j ++){
                 if (b1.getPuyo(i,j) == null || b2.getPuyo(i,j) == null){
