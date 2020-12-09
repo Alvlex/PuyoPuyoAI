@@ -2,50 +2,48 @@ package appTest;
 
 import app.Board;
 import app.Garbage;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Random;
+import org.junit.*;
 
 public class unitTestsGarbage {
 
-    Garbage g;
-    Board b;
+    private Template empty = new Template("empty.csv");
+    private Template dropGarbageOutput = new Template("dropGarbageOutput.csv");
+    private Board b = empty.getBoard();
+    private Garbage g = new Garbage(b);
 
     @Before
-    public void prepare(){
-        b = new Board();
+    public void reset(){
+        b = empty.getBoard();
         g = new Garbage(b);
     }
 
     @Test
     public void dropGarbageTest(){
-        Board b2 = b.copyBoard();
-        Garbage g2 = new Garbage(b2);
-        g2.makeGarbage(6);
-        g2.dropGarbage();
-        Assert.assertEquals(10, g2.removeGarbage(10));
-        Board test = new Board();
-        for (int i = 0; i < 6; i ++) {
-            test.dropGarbage(i);
-        }
-        unitTestsBoard utb = new unitTestsBoard();
-        utb.assertEqualBoards(b2, test);
-        g2.makeGarbage(72);
-        g2.dropGarbage();
-        Assert.assertFalse(b2.checkPossibilities());
+        g.makeGarbage(6);
+        g.dropGarbage();
+        Assert.assertEquals(10, g.removeGarbage(10));
+        Assert.assertTrue(dropGarbageOutput.equalBoards(b));
+
+    }
+
+    @Test
+    public void dropGarbageFillTest(){
+        g.makeGarbage(78);
+        g.dropGarbage();
+        Assert.assertFalse(b.checkPossibilities());
     }
 
     @Test
     public void removeGarbageTest(){
-        Board b2 = b.copyBoard();
-        Garbage g2 = new Garbage(b2);
-        Random x = new Random();
-        int garbage = x.nextInt(100);
-        Assert.assertEquals(garbage, g2.removeGarbage(garbage));
-        g2.makeGarbage(50);
-        int score = g2.removeGarbage(garbage);
-        Assert.assertTrue(score == garbage - 50 || score == 0);
+        Assert.assertEquals(50, g.removeGarbage(50));
+        g.makeGarbage(25);
+        Assert.assertTrue(g.removeGarbage(50) == 25);
     }
+
+    @Test
+    public void removeGarbageOverflowTest(){
+        g.makeGarbage(100);
+        Assert.assertEquals(0, g.removeGarbage(50));
+    }
+
 }

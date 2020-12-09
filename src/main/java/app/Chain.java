@@ -48,7 +48,7 @@ public class Chain implements ChainI{
         for (int[] pos: recentlyDropped){
             boolean skip = false;
             for (ArrayList<int[]> group: groupsThatPop){
-                if (group.contains(pos)){
+                if (contains(group, pos)){
                     skip = true;
                     break;
                 }
@@ -59,7 +59,7 @@ public class Chain implements ChainI{
             ArrayList<int[]> toCheck = findAdjacent(pos[0], pos[1]);
             while(!toCheck.isEmpty()){
                 int[] currentCheck = toCheck.remove(0);
-                if (board.getPuyo(currentCheck).colour == board.getPuyo(pos).colour && !contains(connected, currentCheck)){
+                if (board.getPuyo(currentCheck).getColour().equals(board.getPuyo(pos).getColour()) && !contains(connected, currentCheck)){
                     connected.add(currentCheck);
                     toCheck.addAll(findAdjacent(currentCheck[0], currentCheck[1]));
                 }
@@ -101,6 +101,11 @@ public class Chain implements ChainI{
     private void popGroup(ArrayList<int[]> group){
         for (int[] coords: group){
             board.removePuyo(coords);
+            for(int[] pos: findAdjacent(coords[0],coords[1])){
+                if (board.getPuyo(pos).getColour().equals("GREY")){
+                    board.removePuyo(pos);
+                }
+            }
         }
     }
 
@@ -124,8 +129,7 @@ public class Chain implements ChainI{
         for (int i = 0; i < chain.size(); i ++){
             accumulator += (i + 1) * (chain.get(i) - 4);
         }
-        int output = accumulator + 3 * (chain.size() - 1) * chain.size();
-        return output;
+        return accumulator + 3 * (chain.size() - 1) * chain.size();
     }
 
     @Override

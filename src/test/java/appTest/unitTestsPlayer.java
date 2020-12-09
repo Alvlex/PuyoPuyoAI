@@ -3,6 +3,7 @@ package appTest;
 import AI.RandomStrategy;
 import app.*;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -10,22 +11,29 @@ import java.util.Random;
 
 public class unitTestsPlayer {
 
+    Template empty = new Template("empty.csv");
+    Board b;
+    Player p;
+    Puyo[][] pastPuyo;
+
+    @Before
+    public void prepare(){
+        b = empty.getBoard();
+        p = new Player(b,  4, new RandomStrategy());
+        pastPuyo = copyPuyoList(p.currentPuyo);
+    }
+
+
     @Test
     public void turnTest(){
-        Board b = new Board();
-        Player p = new Player(b,  4, new RandomStrategy());
-        Puyo[][] pastPuyo = copyPuyoList(p.currentPuyo);
         p.turn();
-        Assert.assertTrue(assertBoardsDifferent(new Board(), b));
-        Assert.assertTrue(assertListsDifferent(pastPuyo, p.currentPuyo));
+        Assert.assertFalse(empty.equalBoards(b));
+        Assert.assertTrue(listsDifferent(pastPuyo, p.currentPuyo));
 
     }
 
     @Test
     public void findRecentlyDroppedTest(){
-        Board b = new Board();
-        Player p = new Player(b, 4, new RandomStrategy());
-        Random x = new Random();
         Move m = p.turn();
         int[][] coords = m.getCoord();
         List<int[]> test = p.findRecentlyDropped(m);
@@ -50,34 +58,26 @@ public class unitTestsPlayer {
         return result;
     }
 
-    private boolean assertListsDifferent(Puyo[][] p1, Puyo[][] p2){
+    private boolean listsDifferent(Puyo[][] p1, Puyo[][] p2){
         for (int i = 0; i < p1.length; i ++){
             for (int j = 0; j < p1[i].length; j ++){
-                if (p1[i][j] != p2[i][j]){
+                if (!p1[i][j].getColour().equals(p2[i][j].getColour())){
                     return true;
                 }
             }
         }
-        return false;
+        return listSameElement(p1) && listSameElement(p2);
     }
 
-    private boolean assertBoardsDifferent(Board b1, Board b2){
-        for (int i = 0; i < 6; i ++){
-            for (int j = 0; j < 13; j ++){
-                if (b1.getPuyo(i,j) == null && b2.getPuyo(i,j) != null){
-                    return true;
-                }
-                else if (b1.getPuyo(i,j) != null && b2.getPuyo(i,j) == null){
-                    return true;
-                }
-                else if (b1.getPuyo(i,j) == null && b2.getPuyo(i,j) == null){
-                    // So we don't compare colours of null Puyo
-                }
-                else if (!b1.getPuyo(i,j).getColour().equals(b2.getPuyo(i,j).getColour())){
-                    return true;
+    private boolean listSameElement(Puyo[][] p){
+        for (int i = 0; i < 2; i ++){
+            String colour = p[0][i].getColour();
+            for (int j = 0; j < p.length; j ++){
+                if (!p[j][i].getColour().equals(colour)){
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 }

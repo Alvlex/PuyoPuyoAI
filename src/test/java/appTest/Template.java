@@ -29,11 +29,12 @@ public class Template {
             int row = 12;
             while ((nextLine = reader.readNext()) != null && row >= 0) {
                 for (int i = 0; i < nextLine.length; i ++) {
-                    board[i][row] = decodeColour(nextLine[i].charAt(0));
+                    Puyo temp = decodeColour(nextLine[i].charAt(nextLine[i].length() - 1));
+                    board[i][row] = temp;
                 }
                 row --;
             }
-        } catch (IOException | CsvValidationException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new Board(board);
@@ -59,7 +60,7 @@ public class Template {
         }
     }
 
-    private Puyo decodeColour(char c){
+    private Puyo decodeColour(char c) throws Exception {
         switch(c){
             case '_':
                 return null;
@@ -76,23 +77,27 @@ public class Template {
             case 'P':
                 return new Puyo(Colour.MAGENTA);
         }
-        return null;
-    }
-
-    ArrayList<int[]> getRecentlyDropped(){
-        ArrayList<int[]> result = new ArrayList<>();
-        for (int i = 0; i < b.getNoCols(); i ++){
-            for (int j = 0; j < b.getNoRows(); j ++){
-                if (b.getPuyo(i,j) != null){
-                    result.add(new int[]{i,j});
-                }
-            }
-        }
-        return result;
+        throw new Exception("Invalid Character " + c);
     }
 
     Board getBoard(){
         return b.copyBoard();
+    }
+
+    boolean equalBoards(Board b2){
+        for (int i = 0; i < 6; i ++){
+            for (int j = 0; j < 13; j ++){
+                if (b.getPuyo(i,j) == null || b2.getPuyo(i,j) == null){
+                    if(b.getPuyo(i,j) != b2.getPuyo(i,j)){
+                        return false;
+                    }
+                }
+                else if (!b.getPuyo(i,j).getColour().equals(b2.getPuyo(i,j).getColour())){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     // Tests to implement:

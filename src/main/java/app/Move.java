@@ -23,7 +23,7 @@ public class Move implements MoveI{
             this.rot = rot;
         }
         else{
-            rot = 0;
+            this.rot = 0;
         }
         rotHelper();
     }
@@ -38,12 +38,12 @@ public class Move implements MoveI{
             col ++;
     }
 
-    public void rotClock(){
+    public void rotAnti(){
         rot = (rot + 3) % 4;
         rotHelper();
     }
 
-    public void rotAnti(){
+    public void rotClock(){
         rot = (rot + 1) % 4;
         rotHelper();
     }

@@ -2,141 +2,75 @@ package appTest;
 import app.*;
 import org.junit.*;
 
-import java.util.Random;
-
 public class unitTestsBoard {
 
-    Board empty;
-    Board full;
+    private Template empty = new Template("empty.csv");
+    private Template full = new Template("full.csv");
+    private Template partialFull = new Template("partialFull.csv");
+    private Template cascadeInput = new Template("cascadeInput.csv");
+    private Template cascadeOutput = new Template("cascadeOutput.csv");
 
-    @Before
-    public void prepare(){
-        empty = new Board();
-        Puyo[][] full = new Puyo[6][13];
-        for (int i = 0; i < 6; i ++){
-            for (int j = 0; j < 13; j ++){
-                full[i][j] = PuyoI.createGarbage();
-            }
-        }
-        this.full = new Board(full);
-    }
+    private Puyo[] puyo = PuyoI.create2Puyo(4);
+    private Move move = new Move();
+
     @Test
     public void dropGarbageTest(){
-        Random x = new Random();
-        Board copy = empty.copyBoard();
-        int col = x.nextInt(6);
-        copy.dropGarbage(col);
-        Assert.assertEquals(copy.getPuyo(col, 0).getColour(), "GREY");
+        Board emptyCopy = empty.getBoard();
+        emptyCopy.dropGarbage(1);
+        Assert.assertEquals(emptyCopy.getPuyo(1, 0).getColour(), "GREY");
     }
     @Test
     public void checkPossibilitiesTest(){
-        Assert.assertEquals(full.checkPossibilities(), false);
-        Assert.assertEquals(empty.checkPossibilities(), true);
-        Board copyFull = full.copyBoard();
-        copyFull.removePuyo(0, 12);
-        copyFull.removePuyo(2, 12);
-        copyFull.removePuyo(4, 12);
-        Assert.assertEquals(copyFull.checkPossibilities(), false);
+        Assert.assertFalse(full.getBoard().checkPossibilities());
+        Assert.assertTrue(empty.getBoard().checkPossibilities());
+        Assert.assertFalse(partialFull.getBoard().checkPossibilities());
     }
     @Test
     public void dropPuyoTest(){
-        Random x = new Random();
-        Colour colour1 = Colour.values()[x.nextInt(Colour.values().length)];
-        Colour colour2 = Colour.values()[x.nextInt(Colour.values().length)];
-        Puyo[] puyo = {new Puyo(colour1), new Puyo(colour2)};
-        Move m = new Move();
-        Board copy = empty.copyBoard();
+        Board emptyCopy = empty.getBoard();
         // Check it succeeded
-        Assert.assertEquals(copy.dropPuyo(puyo, m), true);
-        Assert.assertEquals(copy.getPuyo(2, 0).getColour(), colour2.name());
-        Assert.assertEquals(copy.getPuyo(2,1).getColour(), colour1.name());
+        Assert.assertTrue(emptyCopy.dropPuyo(puyo, move));
+        Assert.assertEquals(emptyCopy.getPuyo(2, 0).getColour(), puyo[1].getColour());
+        Assert.assertEquals(emptyCopy.getPuyo(2,1).getColour(), puyo[0].getColour());
 
-        Board copyFull = full.copyBoard();
-        copyFull.removePuyo(2, 12);
+        Board partialFullCopy = partialFull.getBoard();
         // Check it failed properly
-        Assert.assertEquals(copyFull.dropPuyo(puyo, m), false);
-        Assert.assertEquals(copyFull.getPuyo(2,12), null);
+        Assert.assertFalse(partialFullCopy.dropPuyo(puyo, move));
+        Assert.assertNull(partialFullCopy.getPuyo(2, 12));
     }
 
     @Test
     public void cascadePuyoTest(){
-        Random x = new Random();
-        Puyo[][] temp = new Puyo[6][13];
-        Puyo[][] result = new Puyo[6][13];
-        for (int i = 0; i < 6; i ++){
-            int colPos = 1;
-            int count = 0;
-            while (colPos < 13){
-                Puyo p = new Puyo(Colour.values()[x.nextInt(Colour.values().length - 1)]);
-                temp[i][colPos] = p;
-                result[i][count] = p;
-                colPos += x.nextInt(2) + 1;
-                count ++;
-            }
-        }
-        Board b = new Board(temp);
-        b.cascadePuyo();
-        assertEqualBoards(b, new Board(result));
-    }
-
-    boolean equalBoards(Board b1, Board b2){
-        for (int i = 0; i < 6; i ++){
-            for (int j = 0; j < 13; j ++){
-                if (b1.getPuyo(i,j) == null || b2.getPuyo(i,j) == null){
-                    Assert.assertEquals(b1.getPuyo(i,j), b2.getPuyo(i,j));
-                }
-                else {
-                    Assert.assertEquals(b1.getPuyo(i, j).getColour(), b2.getPuyo(i,j).getColour());
-                }
-            }
-        }
+        Board cascadeInputCopy = cascadeInput.getBoard();
+        cascadeInputCopy.cascadePuyo();
+        Assert.assertTrue(cascadeOutput.equalBoards(cascadeInputCopy));
+        // May need to check that cascade Puyo returns the right recently dropped as well
     }
 
     @Test
     public void copyBoardTest(){
-        Board emptyCopy = empty.copyBoard();
-        Board fullCopy = full.copyBoard();
-        assertEqualBoards(emptyCopy, empty);
-        assertEqualBoards(fullCopy, full);
-        for (int i = 0; i < 6; i ++){
-            for (int j = 0; j < 13; j ++){
-                if (emptyCopy.getPuyo(i,j) != null){
-                    Assert.assertNotEquals(empty.getPuyo(i,j), emptyCopy.getPuyo(i,j));
-                }
-                if (fullCopy.getPuyo(i,j) != null){
-                    Assert.assertNotEquals(full.getPuyo(i,j), fullCopy.getPuyo(i,j));
-                }
-            }
-        }
+        Assert.assertTrue(empty.equalBoards(empty.getBoard()));
+        Assert.assertTrue(full.equalBoards(full.getBoard()));
+        Assert.assertTrue(partialFull.equalBoards(partialFull.getBoard()));
+        Assert.assertTrue(cascadeInput.equalBoards(cascadeInput.getBoard()));
+        Assert.assertTrue(cascadeOutput.equalBoards(cascadeOutput.getBoard()));
     }
 
     @Test
     public void getPuyoTest(){
-        Random x = new Random();
-        Puyo[][] board = new Puyo[6][13];
-        for (int i = 0; i < 6; i ++){
-            for (int j = 0; j < 13; j ++){
-                board[i][j] = new Puyo(Colour.values()[x.nextInt(Colour.values().length)]);
-            }
-        }
-        Board b = new Board(board);
-        for (int i = 0; i < 6; i ++){
-            for (int j = 0; j < 13; j ++){
-                Assert.assertNotEquals(b.getPuyo(i,j), board[i][j]);
-                Assert.assertEquals(b.getPuyo(i,j).getColour(), board[i][j].getColour());
-                Assert.assertEquals(empty.getPuyo(i,j), null);
-                Assert.assertNotEquals(b.getPuyo(new int[]{i,j}), board[i][j]);
-                Assert.assertEquals(b.getPuyo(new int[]{i,j}).getColour(), board[i][j].getColour());
-                Assert.assertEquals(empty.getPuyo(new int[]{i,j}), null);
-            }
-        }
+        Assert.assertEquals(cascadeOutput.getBoard().getPuyo(2,0).getColour(), "GREEN");
+        Assert.assertEquals(cascadeOutput.getBoard().getPuyo(1,8).getColour(), "BLUE");
+        Assert.assertEquals(cascadeOutput.getBoard().getPuyo(0,2).getColour(), "YELLOW");
+        Assert.assertEquals(cascadeOutput.getBoard().getPuyo(5,5).getColour(), "RED");
+        Assert.assertEquals(cascadeOutput.getBoard().getPuyo(3,12).getColour(), "GREY");
     }
 
     @Test
-    public void removePuyoTest(){
+    public void peekColTest(){
         for (int i = 0; i < 6; i ++){
-            Assert.assertEquals(empty.peekCol(i), -1);
-            Assert.assertEquals(full.peekCol(i), 12);
+            Assert.assertEquals(empty.getBoard().peekCol(i), -1);
+            Assert.assertEquals(full.getBoard().getPuyo(i, 12).getColour(), "GREY");
+            Assert.assertEquals(full.getBoard().peekCol(i), 12);
         }
     }
 
