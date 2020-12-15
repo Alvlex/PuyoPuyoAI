@@ -15,4 +15,6 @@ public interface BoardI {
     void removePuyo(int col, int row); // Don't need tests
     void removePuyo(int[] pos); // Don't need tests
     int peekCol(int col);
+    ArrayList<int[]> findAllPuyo();
+    boolean equalBoards(Board b); // Still needs tests
 }

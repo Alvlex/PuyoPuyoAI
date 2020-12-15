@@ -76,15 +76,9 @@ public class Board implements BoardI{
                     noOfSpaces ++;
                 }
                 else if (noOfSpaces > 0){
-                    for (int i = row; i < getNoRows(); i ++){
-                        board[col][i - noOfSpaces] = board[col][i];
-                        board[col][i] = null;
-                        if (board[col][i - noOfSpaces] != null) {
-                            dropped.add(new int[]{col, i - noOfSpaces});
-                        }
-                    }
-                    row -= noOfSpaces + 1;
-                    noOfSpaces = 0;
+                    board[col][row - noOfSpaces] = board[col][row];
+                    board[col][row] = null;
+                    dropped.add(new int[]{col, row - noOfSpaces});
                 }
             }
         }
@@ -162,5 +156,34 @@ public class Board implements BoardI{
             }
         }
         return false;
+    }
+
+    @Override
+    public ArrayList<int[]> findAllPuyo(){
+        ArrayList<int[]> allPuyo = new ArrayList<>();
+        for (int i = 0; i < getNoCols(); i ++){
+            for (int j = 0; j < getNoRows(); j ++){
+                if (getPuyo(i,j) != null)
+                    allPuyo.add(new int[]{i,j});
+            }
+        }
+        return allPuyo;
+    }
+
+    @Override
+    public boolean equalBoards(Board b2){
+        for (int i = 0; i < 6; i ++){
+            for (int j = 0; j < 13; j ++){
+                if (getPuyo(i,j) == null || b2.getPuyo(i,j) == null){
+                    if(getPuyo(i,j) != b2.getPuyo(i,j)){
+                        return false;
+                    }
+                }
+                else if (!getPuyo(i,j).getColour().equals(b2.getPuyo(i,j).getColour())){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

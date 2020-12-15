@@ -2,6 +2,8 @@ package appTest;
 import app.*;
 import org.junit.*;
 
+import java.util.ArrayList;
+
 public class unitTestsBoard {
 
     private Template empty = new Template("empty.csv");
@@ -9,6 +11,7 @@ public class unitTestsBoard {
     private Template partialFull = new Template("partialFull.csv");
     private Template cascadeInput = new Template("cascadeInput.csv");
     private Template cascadeOutput = new Template("cascadeOutput.csv");
+    private Template cascade2 = new Template("cascade2.csv");
 
     private Puyo[] puyo = PuyoI.create2Puyo(4);
     private Move move = new Move();
@@ -40,11 +43,19 @@ public class unitTestsBoard {
     }
 
     @Test
-    public void cascadePuyoTest(){
+    public void cascadePuyoBoardTest(){
         Board cascadeInputCopy = cascadeInput.getBoard();
         cascadeInputCopy.cascadePuyo();
         Assert.assertTrue(cascadeOutput.equalBoards(cascadeInputCopy));
         // May need to check that cascade Puyo returns the right recently dropped as well
+    }
+
+    @Test
+    public void cascadePuyoReturnTest(){
+        ArrayList<int[]> actual = cascade2.getBoard().cascadePuyo();
+        int[][] expected = {{0,0}, {1,0}, {1,1}, {1,2}};
+        Assert.assertArrayEquals(actual.toArray(), expected);
+
     }
 
     @Test

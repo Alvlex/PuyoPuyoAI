@@ -3,6 +3,7 @@ package app;
 import AI.HumanStrategy;
 import AI.RandomStrategy;
 import AI.Strategy;
+import AI.pms.PMS;
 
 import java.util.ArrayList;
 
@@ -134,7 +135,7 @@ public class Game {
     }
 
     public static void main(String[] args){
-        Game g = new Game(new Strategy[]{new HumanStrategy(0), new RandomStrategy()});
+        Game g = new Game(new Strategy[]{new HumanStrategy(0), new PMS()});
         g.play();
     }
 }

@@ -53,7 +53,14 @@ public class Chain implements ChainI{
                     break;
                 }
             }
-            if (skip || board.getPuyo(pos).getColour().equals("GREY")) continue;
+            try {
+                if (skip || board.getPuyo(pos).getColour().equals("GREY")) continue;
+            }
+            catch(NullPointerException e){
+                String message = new Output(new Board[]{board}).printBoards();
+                message += "\n" + pos[0] + ", " + pos[1];
+                throw new RuntimeException(message);
+            }
             ArrayList<int[]> connected = new ArrayList<>();
             connected.add(pos);
             ArrayList<int[]> toCheck = findAdjacent(pos[0], pos[1]);
@@ -135,6 +142,13 @@ public class Chain implements ChainI{
     @Override
     public int chainLength(){
         return chain.size();
+    }
+
+    @Override
+    public void runChain(ArrayList<int[]> recDrop){
+        while(isPopping(recDrop)){
+            recDrop = chainTurn(recDrop);
+        }
     }
 
 }
