@@ -26,7 +26,7 @@ public class unitTestsPlayer {
 
     @Test
     public void turnTest(){
-        p.turn();
+        p.turn(new Board());
         Assert.assertFalse(empty.equalBoards(b));
         Assert.assertTrue(listsDifferent(pastPuyo, p.currentPuyo));
 

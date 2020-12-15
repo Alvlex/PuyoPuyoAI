@@ -2,7 +2,7 @@ package app;
 
 public class Output implements OutputI{
 
-    private Board[] boards;
+    Board[] boards;
     private Puyo[][][] currentPuyo;
     private Move[] moves;
 

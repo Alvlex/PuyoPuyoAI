@@ -35,14 +35,14 @@ public class unitTestsPMS {
     @Test
     public void treeEmptyCheck(){
         Node root = new Node(empty.getBoard());
-        PMS.generateTree(root, next3Pairs, new Board());
+        PMS.generateTree(root, next3Pairs, 0);
         Assert.assertEquals(findDepth(root), 3);
     }
 
     @Test
     public void treeFullCheck(){
         Node root = new Node(full.getBoard());
-        PMS.generateTree(root, next3Pairs, new Board());
+        PMS.generateTree(root, next3Pairs, 0);
         Assert.assertEquals(findDepth(root), 0);
     }
 

@@ -45,7 +45,7 @@ public class unitTestsMove {
         for (int i = 0; i < 4; i ++){
             Assert.assertEquals(move.getCoord()[0][0], 2);
             Assert.assertEquals(move.getCoord()[0][1], i == 2 ? 1: 0);
-            Assert.assertEquals(move.getCoord()[1][0], i == 0 ? 2: 4 - i);
+            Assert.assertEquals(move.getCoord()[1][0], i == 0 ? 2: i);
             Assert.assertEquals(move.getCoord()[1][1], i == 0 ? 1: 0);
             move.rotClock();
         }
@@ -68,9 +68,9 @@ public class unitTestsMove {
         for (int i = 0; i < 4; i ++){
             Assert.assertEquals(move.getCoord()[0][0], 2);
             Assert.assertEquals(move.getCoord()[0][1], i == 2 ? 1: 0);
-            Assert.assertEquals(move.getCoord()[1][0], i == 0 ? 2: i);
+            Assert.assertEquals(move.getCoord()[1][0], i == 0 ? 2: 4 - i);
             Assert.assertEquals(move.getCoord()[1][1], i == 0 ? 1: 0);
-            move.rotClock();
+            move.rotAnti();
         }
 
     }

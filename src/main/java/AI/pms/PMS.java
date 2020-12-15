@@ -10,19 +10,36 @@ public class PMS implements Strategy {
 
     @Override
     public Move makeMove(Board b, Puyo[][] currentPuyo) {
+        return makeMove(b, currentPuyo, new Board());
+    }
+
+    public Move makeMove(Board b, Puyo[][] currentPuyo, Board opponent){
         Node root = new Node(b);
-        generateTree(root, currentPuyo, new Board());
-        Node target = selectNode(root, new ArrayList<>());
+        Chain c = new Chain(opponent.copyBoard());
+        c.runChain(opponent.findAllPuyo());
+        generateTree(root, currentPuyo, c.chainLength());
+        Node target = selectNode(root, getHeuristics(c.chainLength(), getSpace(b)));
         Move m = findNextMove(root, target, currentPuyo[0]);
         b.dropPuyo(currentPuyo[0], m);
         return m;
     }
 
-    public Move makeMove(Board b, Puyo[][] currentPuyo, Board opponent){
-        Node root = new Node(b);
-        generateTree(root, currentPuyo, opponent);
-        Node target = selectNode(root, new ArrayList<>());
-        return findNextMove(root, target, currentPuyo[0]);
+    private int getSpace(Board b){
+        int space = 0;
+        for (int i = 0; i < b.getNoCols(); i ++){
+            for (int j = 0; j < b.getNoRows(); j ++){
+                if (b.getPuyo(i,j) == null)
+                    space ++;
+            }
+        }
+        return space;
+    }
+
+    private ArrayList<Boolean> getHeuristics(int oppChainLength, int emptySpaceLeft){
+        ArrayList<Boolean> result = new ArrayList<>();
+        result.add(oppChainLength > 0 && oppChainLength <= 3);
+        result.add(emptySpaceLeft <= 10);
+        return result;
     }
 
     private Move findNextMove(Node root, Node target, Puyo[] puyo){
@@ -76,12 +93,10 @@ public class PMS implements Strategy {
         return resultStates;
     }
 
-    public void generateTree(Node root, Puyo[][] next3Pairs, Board opponent){
+    public void generateTree(Node root, Puyo[][] next3Pairs, int oppChainLength){
         List<Node> tempList = new ArrayList<>();
         tempList.add(root);
-        Chain c = new Chain(opponent.copyBoard());
-        c.runChain(opponent.findAllPuyo());
-        int maxDepth = Math.min(3, c.chainLength() == 0 ? 3 : c.chainLength());
+        int maxDepth = Math.min(3, oppChainLength == 0 ? 3 : oppChainLength);
         for (int i = 0; i < maxDepth; i ++){
             for (int j = tempList.size() - 1; j >= 0; j --){
                 Node tempNode = tempList.remove(0);

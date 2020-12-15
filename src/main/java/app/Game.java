@@ -65,7 +65,7 @@ public class Game {
 
     private boolean singlePlayerHelper(int playerNo, boolean popping){
         if (!popping) {
-            Move m = players[playerNo].turn();
+            Move m = players[playerNo].turn(output.boards[1 - playerNo]);
             popping = players[playerNo].chain.isPopping(players[playerNo].findRecentlyDropped(m));
             recentlyDropped[playerNo].clear();
             recentlyDropped[playerNo].addAll(players[playerNo].findRecentlyDropped(m));
