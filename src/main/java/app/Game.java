@@ -46,14 +46,14 @@ public class Game {
     private int playSinglePlayer(int noOfTurns){
         int max = 0;
         boolean popping = players[0].chain.isPopping(recentlyDropped[0]);
-        while(players[0].board.checkPossibilities() && turn < noOfTurns) {
+        while((players[0].board.checkPossibilities() || popping) && turn < noOfTurns && max < 10) {
             updateTurn();
-            if (popping) {
+            if (popping || true) {
                 System.out.println(output.printBoards());
             }
-            popping = singlePlayerHelper(0, popping);
+            popping = singlePlayerHelper(0, popping, new Board());
             if (!popping){
-                max = Math.max(players[0].chain.score(), max);
+                max = Math.max(players[0].chain.chainLength(), max);
                 players[0].chain.resetChain();
             }
         }
@@ -63,9 +63,9 @@ public class Game {
         return max;
     }
 
-    private boolean singlePlayerHelper(int playerNo, boolean popping){
+    private boolean singlePlayerHelper(int playerNo, boolean popping, Board oppBoard){
         if (!popping) {
-            Move m = players[playerNo].turn(output.boards[1 - playerNo]);
+            Move m = players[playerNo].turn(oppBoard);
             popping = players[playerNo].chain.isPopping(players[playerNo].findRecentlyDropped(m));
             recentlyDropped[playerNo].clear();
             recentlyDropped[playerNo].addAll(players[playerNo].findRecentlyDropped(m));
@@ -90,7 +90,7 @@ public class Game {
             }
             int[] scores = new int[2];
             for (int playerNo = 0; playerNo < players.length; playerNo ++) {
-                popping[playerNo] = singlePlayerHelper(playerNo, popping[playerNo]);
+                popping[playerNo] = singlePlayerHelper(playerNo, popping[playerNo], output.boards[1 - playerNo]);
                 if (!popping[playerNo]) {
                     scores[playerNo] = players[playerNo].chain.score();
                     players[playerNo].chain.resetChain();
@@ -135,7 +135,7 @@ public class Game {
     }
 
     public static void main(String[] args){
-        Game g = new Game(new Strategy[]{new HumanStrategy(0), new PMS()});
+        Game g = new Game(new Strategy[]{new PMS()});
         g.play();
     }
 }

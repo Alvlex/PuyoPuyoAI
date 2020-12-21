@@ -22,10 +22,6 @@ public class Node {
             garbage = -1;
     }
 
-    void addChild(Node n){
-        children.add(n);
-    }
-
     void addChildren(Collection<Node> nodes){
         children.addAll(nodes);
     }

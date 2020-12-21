@@ -18,9 +18,13 @@ public class PMS implements Strategy {
         Chain c = new Chain(opponent.copyBoard());
         c.runChain(opponent.findAllPuyo());
         generateTree(root, currentPuyo, c.chainLength());
+        generateDepth4(root, 4);
+        System.out.println("Generated Tree");
         Node target = selectNode(root, getHeuristics(c.chainLength(), getSpace(b)));
+        System.out.println("Node selected");
         Move m = findNextMove(root, target, currentPuyo[0]);
         b.dropPuyo(currentPuyo[0], m);
+        System.out.println("Returning move");
         return m;
     }
 
@@ -168,5 +172,32 @@ public class PMS implements Strategy {
             walkthrough.addAll(current.getChildren());
         }
         return max;
+    }
+
+    private void generateDepth4(Node root, int colours){
+        // Tree needs to be generated before this
+        List<List<Node>> treeLayout = new ArrayList<>();
+        ArrayList<Node> firstLayer = new ArrayList<>();
+        firstLayer.add(root);
+        treeLayout.add(firstLayer);
+        for (int i = 0; i < 3; i ++){
+            List<Node> currentLayer = treeLayout.get(i);
+            List<Node> nextLayer = new ArrayList<>();
+            for (Node n: currentLayer){
+                nextLayer.addAll(n.getChildren());
+            }
+            treeLayout.add(nextLayer);
+        }
+        List<Node> depth3 = treeLayout.get(3);
+        int count = 0;
+        for (Node n: depth3){
+            if (n.getGarbage() == -1) {
+                for (int i = 0; i < colours; i++) {
+                    Puyo[] pair = {new Puyo(Colour.values()[i]), new Puyo(Colour.values()[i])};
+                    n.addChildren(generatePoss(n.getBoard(), pair));
+                    System.out.println(count ++);
+                }
+            }
+        }
     }
 }
