@@ -1,5 +1,7 @@
 package app;
 
+import AI.HumanStrategy;
+import AI.RandomStrategy;
 import AI.Strategy;
 import AI.pms.PMS;
 
@@ -14,13 +16,23 @@ public class Player implements PlayerI{
     private int noOfColours;
     private Strategy s;
 
-    public Player(Board b, int noOfColours, Strategy s){
+    public Player(Board b, int noOfColours, int s, int playerNo, Output output){
         this.noOfColours = noOfColours;
         currentPuyo = PuyoI.createInitialPuyo(noOfColours);
         board = b;
         chain = new Chain(board);
         garbage = new Garbage(board);
-        this.s = s;
+        switch(s){
+            case 0:
+                this.s = new HumanStrategy(output, playerNo);
+                break;
+            case 1:
+                this.s = new RandomStrategy();
+                break;
+            case 2:
+                this.s = new PMS(true);
+                break;
+        }
     }
 
     private void getNextPuyo(){

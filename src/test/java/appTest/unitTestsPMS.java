@@ -6,6 +6,7 @@ import app.Board;
 import app.Puyo;
 import app.PuyoI;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class unitTestsPMS {
@@ -13,9 +14,16 @@ public class unitTestsPMS {
     private Template PMS1 = new Template("PMS1.csv");
     private Template full = new Template("full.csv");
     private Template empty = new Template("empty.csv");
-    private PMS PMS = new PMS();
     private Puyo[][] next3Pairs = {PuyoI.create2Puyo(1), PuyoI.create2Puyo(1), PuyoI.create2Puyo(1)};
+    private PMS PMS;
+    private PMS PMS4;
 
+
+    @Before
+    public void prepare(){
+        PMS = new PMS();
+        PMS4 = new PMS(true);
+    }
 
     @Test
     public void moveCheck(){
@@ -24,35 +32,43 @@ public class unitTestsPMS {
         Assert.assertEquals(b.getPuyo(4,0).getColour(), "RED");
     }
 
-    private int findDepth(Node n){
-        int currentDepth = 0;
-        for (Node n1: n.getChildren()){
-            currentDepth = Math.max(1 + findDepth(n1), currentDepth);
-        }
-        return currentDepth;
-    }
+//    @Test
+//    public void treeEmptyCheck(){
+//        PMS.recursiveTree();
+//        Assert.assertEquals(PMS.findDepth(), 3);
+//    }
 
-    @Test
-    public void treeEmptyCheck(){
-        Node root = new Node(empty.getBoard());
-        PMS.generateTree(root, next3Pairs, 0);
-        Assert.assertEquals(findDepth(root), 3);
-    }
+//    @Test
+//    public void runPMS10Turns(){
+//        PMS PMS = getPMS(empty.getBoard());
+//        for (int i = 0; i < 10; i ++){
+//            PMS.makeMove(PuyoI.create2Puyo(1), new Board());
+//        }
+//    }
 
-    @Test
-    public void treeFullCheck(){
-        Node root = new Node(full.getBoard());
-        PMS.generateTree(root, next3Pairs, 0);
-        Assert.assertEquals(findDepth(root), 0);
-    }
+//    @Test
+//    public void treeDepth4EmptyCheck(){
+//        PMS PMS = getPMS(empty.getBoard(), true);
+//        PMS.recursiveTree();
+//        Assert.assertEquals(PMS.findDepth(), 4);
+//    }
+
+//    @Test
+//    public void treeFullCheck(){
+//        PMS PMS = getPMS(full.getBoard());
+//        PMS.recursiveTree();
+//        Assert.assertEquals(PMS.findDepth(), 0);
+//    }
 
     @Test
     public void generatePossFullCheck(){
-        Assert.assertEquals(PMS.generatePoss(full.getBoard(), PuyoI.create2Puyo(1)).size(), 0);
+        Board b = full.getBoard();
+        Assert.assertEquals(PMS.generatePoss(new Node(b), PuyoI.create2Puyo(1)).size(), 0);
     }
 
     @Test
     public void generatePossEmptyCheck(){
-        Assert.assertEquals(PMS.generatePoss(empty.getBoard(), PuyoI.create2Puyo(1)).size(), 22);
+        Board b = empty.getBoard();
+        Assert.assertEquals(PMS.generatePoss(new Node(b), PuyoI.create2Puyo(1)).size(), 22);
     }
 }

@@ -13,7 +13,7 @@ public class Game {
     private Output output;
     private int turn = 0;
 
-    private Game(Strategy[] strategies){
+    private Game(int[] strategies){
         Board[] b = new Board[strategies.length];
         ArrayList[] al = new ArrayList[strategies.length];
         for (int i = 0; i < strategies.length; i ++){
@@ -24,21 +24,18 @@ public class Game {
     }
 
     public Game(Board b, ArrayList<int[]> startChain){
-        setup(new Board[]{b}, new ArrayList[]{startChain}, new Strategy[]{new RandomStrategy()});
+        setup(new Board[]{b}, new ArrayList[]{startChain}, new int[]{1});
     }
 
     public Game(Board[] b, ArrayList<int[]>[] startChain){
-        setup(b, startChain, new Strategy[]{new RandomStrategy(), new RandomStrategy()});
+        setup(b, startChain, new int[]{1, 1});
     }
 
-    private void setup(Board[] b, ArrayList<int[]>[] startChain, Strategy[] strategies){
+    private void setup(Board[] b, ArrayList<int[]>[] startChain, int[] strategies){
         players = new Player[b.length];
         output = new Output(b);
         for (int i = 0; i < players.length; i ++) {
-            players[i] = new Player(b[i], 4, strategies[i]);
-            if (strategies[i] instanceof HumanStrategy){
-                ((HumanStrategy) strategies[i]).updateOutput(output);
-            }
+            players[i] = new Player(b[i], 4, strategies[i], i, output);
         }
         recentlyDropped = startChain;
     }
@@ -112,6 +109,7 @@ public class Game {
         for (int i = 0; i < players.length; i ++){
             output.updateCurrentPuyo(players[i].currentPuyo, i);
             output.updateBoard(players[i].board, i);
+            output.updateMoves(new Move(), i);
         }
         turn ++;
     }
@@ -135,7 +133,7 @@ public class Game {
     }
 
     public static void main(String[] args){
-        Game g = new Game(new Strategy[]{new PMS()});
+        Game g = new Game(new int[]{2});
         g.play();
     }
 }

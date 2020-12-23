@@ -19,7 +19,7 @@ public class unitTestsPlayer {
     @Before
     public void prepare(){
         b = empty.getBoard();
-        p = new Player(b,  4, new RandomStrategy());
+        p = new Player(b,  4, 1, 0, new Output(new Board[]{b}));
         pastPuyo = copyPuyoList(p.currentPuyo);
     }
 
