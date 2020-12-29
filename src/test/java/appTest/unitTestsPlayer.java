@@ -1,25 +1,24 @@
 package appTest;
 
-import AI.RandomStrategy;
+import AI.TestingStrategy;
 import app.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Random;
 
 public class unitTestsPlayer {
 
-    Template empty = new Template("empty.csv");
-    Board b;
-    Player p;
-    Puyo[][] pastPuyo;
+    private Template empty = new Template("empty.csv");
+    private Board b;
+    private Player p;
+    private Puyo[][] pastPuyo;
 
     @Before
     public void prepare(){
         b = empty.getBoard();
-        p = new Player(b,  4, 1, 0, new Output(new Board[]{b}));
+        p = new Player(b,  4, new TestingStrategy());
         pastPuyo = copyPuyoList(p.currentPuyo);
     }
 
@@ -35,17 +34,9 @@ public class unitTestsPlayer {
     @Test
     public void findRecentlyDroppedTest(){
         Move m = p.turn();
-        int[][] coords = m.getCoord();
         List<int[]> test = p.findRecentlyDropped(m);
-        if (coords[0][1] == 1 || coords[1][1] == 1){
-            int temp = coords[0][1];
-            coords[0][1] = coords[1][1];
-            coords[1][1] = temp;
-        }
-        int[] first = {coords[0][0], coords[0][1]};
-        int[] second = {coords[1][0], coords[1][1]};
-        Assert.assertArrayEquals(test.get(0), first);
-        Assert.assertArrayEquals(test.get(1), second);
+        Assert.assertArrayEquals(test.get(0), new int[]{0,1});
+        Assert.assertArrayEquals(test.get(1), new int[]{0,0});
     }
 
     private Puyo[][] copyPuyoList(Puyo[][] p){

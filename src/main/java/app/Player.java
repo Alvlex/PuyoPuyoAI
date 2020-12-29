@@ -14,25 +14,15 @@ public class Player implements PlayerI{
     Chain chain;
     Garbage garbage;
     private int noOfColours;
-    private Strategy s;
+    public Strategy s;
 
-    public Player(Board b, int noOfColours, int s, int playerNo, Output output){
+    public Player(Board b, int noOfColours, Strategy s){
         this.noOfColours = noOfColours;
         currentPuyo = PuyoI.createInitialPuyo(noOfColours);
         board = b;
         chain = new Chain(board);
         garbage = new Garbage(board);
-        switch(s){
-            case 0:
-                this.s = new HumanStrategy(output, playerNo);
-                break;
-            case 1:
-                this.s = new RandomStrategy();
-                break;
-            case 2:
-                this.s = new PMS(true);
-                break;
-        }
+        this.s = s;
     }
 
     private void getNextPuyo(){

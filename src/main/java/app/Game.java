@@ -8,12 +8,12 @@ import AI.pms.PMS;
 import java.util.ArrayList;
 
 public class Game {
-    private Player[] players;
+    public Player[] players;
     private ArrayList<int[]>[] recentlyDropped;
     private Output output;
     private int turn = 0;
 
-    private Game(int[] strategies){
+    public Game(Strategy[] strategies){
         Board[] b = new Board[strategies.length];
         ArrayList[] al = new ArrayList[strategies.length];
         for (int i = 0; i < strategies.length; i ++){
@@ -24,18 +24,18 @@ public class Game {
     }
 
     public Game(Board b, ArrayList<int[]> startChain){
-        setup(new Board[]{b}, new ArrayList[]{startChain}, new int[]{1});
+        setup(new Board[]{b}, new ArrayList[]{startChain}, new Strategy[]{new RandomStrategy()});
     }
 
     public Game(Board[] b, ArrayList<int[]>[] startChain){
-        setup(b, startChain, new int[]{1, 1});
+        setup(b, startChain, new Strategy[]{new RandomStrategy(), new RandomStrategy()});
     }
 
-    private void setup(Board[] b, ArrayList<int[]>[] startChain, int[] strategies){
+    private void setup(Board[] b, ArrayList<int[]>[] startChain, Strategy[] strategies){
         players = new Player[b.length];
         output = new Output(b);
         for (int i = 0; i < players.length; i ++) {
-            players[i] = new Player(b[i], 4, strategies[i], i, output);
+            players[i] = new Player(b[i], 4, strategies[i]);
         }
         recentlyDropped = startChain;
     }
@@ -43,9 +43,9 @@ public class Game {
     private int playSinglePlayer(int noOfTurns){
         int max = 0;
         boolean popping = players[0].chain.isPopping(recentlyDropped[0]);
-        while((players[0].board.checkPossibilities() || popping) && turn < noOfTurns && max < 10) {
+        while((players[0].board.checkPossibilities() || popping) && turn < noOfTurns && max == 0) {
             updateTurn();
-            if (popping || true) {
+            if (popping && false) {
                 System.out.println(output.printBoards());
             }
             popping = singlePlayerHelper(0, popping, new Board());
@@ -55,8 +55,10 @@ public class Game {
             }
         }
         updateTurn();
-        System.out.println(output.printBoards());
-        System.out.println("GAME OVER");
+        if (false) {
+            System.out.println(output.printBoards());
+            System.out.println("GAME OVER");
+        }
         return max;
     }
 
@@ -68,7 +70,7 @@ public class Game {
             recentlyDropped[playerNo].addAll(players[playerNo].findRecentlyDropped(m));
             players[playerNo].garbage.dropGarbage();
         } else {
-            System.out.println("Player " + (playerNo + 1) + " has a " + (players[playerNo].chain.chainLength() + 1) + "-Chain!");
+//            System.out.println("Player " + (playerNo + 1) + " has a " + (players[playerNo].chain.chainLength() + 1) + "-Chain!");
             // Implement chaining
             recentlyDropped[playerNo] = players[playerNo].chain.chainTurn(recentlyDropped[playerNo]);
             popping = players[playerNo].chain.isPopping(recentlyDropped[playerNo]);
@@ -133,7 +135,7 @@ public class Game {
     }
 
     public static void main(String[] args){
-        Game g = new Game(new int[]{2});
+        Game g = new Game(new Strategy[]{new PMS(3, 16, 320)});
         g.play();
     }
 }

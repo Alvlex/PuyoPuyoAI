@@ -12,22 +12,27 @@ public class PMS implements Strategy {
     private Node[] mGLayers;
     private Node[] maxConnectionsNodeLayers;
     private int colours = 4;
+    private double averageLeafNodes;
+    private double averageTime;
+    private int turn = 0;
+    private int spaceLeftHeuristic;
+    private int garbageSatisfy;
+    private int depth;
 
-    public PMS(boolean depth4){
-        prepare(depth4);
+    public PMS(int depth, int spaceLeft, int garbageSatisfy){
+        this.depth = depth;
+        prepare();
+        spaceLeftHeuristic = spaceLeft;
+        this.garbageSatisfy = garbageSatisfy;
     }
 
-    private void prepare(boolean depth4){
-        mGLayers = new Node[depth4 ? 4: 3];
-        maxConnectionsNodeLayers = new Node[depth4 ? 4 : 3];
+    private void prepare(){
+        mGLayers = new Node[depth];
+        maxConnectionsNodeLayers = new Node[depth];
         for (int i = 0; i < mGLayers.length; i ++){
             mGLayers[i] = new Node();
             maxConnectionsNodeLayers[i] = new Node();
         }
-    }
-
-    public PMS(){
-        prepare(false);
     }
 
     @Override
@@ -36,21 +41,32 @@ public class PMS implements Strategy {
     }
 
     public Move makeMove(Board our, Puyo[][] currentPuyo, Board opponent){
+        turn ++;
         Date d = new Date();
-        prepare(mGLayers.length == 4);
+        prepare();
         Node newRoot = new Node(our, null);
-        recursiveTree(newRoot, 0, mGLayers.length - 1, colours, currentPuyo);
+        Date d2 = new Date();
+        int leafNodes = recursiveTree(newRoot, 0, mGLayers.length - 1, colours, currentPuyo);
+//        System.out.println("Leaf nodes: " + leafNodes);
+        averageLeafNodes = (1 - 1.0 / turn) * averageLeafNodes + (1.0 / turn) * leafNodes;
+//        System.out.println("Tree made: " + (new Date().getTime() - d2.getTime()) + "ms");
         // Gauging the length of opponent chain
         Chain c = new Chain(opponent.copyBoard());
         c.runChain(opponent.findAllPuyo());
         // Getting the target node to get to
-        Node target = selectNode(getHeuristics(c.chainLength(), getSpace(newRoot.getBoard())));
+        Node target = selectNode(getHeuristics(c.chainLength(), getSpace(newRoot.getBoard())), c.chainLength() == 0 ? Integer.MAX_VALUE : c.chainLength());
         // Finding the first move to reach that node
         Move m = findNextMove(newRoot, target, currentPuyo[0]);
         // Making the move in the board
         our.dropPuyo(currentPuyo[0], m);
-        System.out.println("TIME :" + (new Date().getTime() - d.getTime()));
+//        System.out.println("Total turn TIME :" + (new Date().getTime() - d.getTime()));
+        averageTime = (1 - 1.0 / turn) * averageTime + (1.0 / turn) * (new Date().getTime() - d.getTime());
         return m;
+    }
+
+    public void printStats(){
+        System.out.println("Average Leaf Nodes: " + averageLeafNodes);
+        System.out.println("Average Time: " + averageTime);
     }
 
     private int getSpace(Board b){
@@ -69,7 +85,8 @@ public class PMS implements Strategy {
         // If there is only one column left, the AI can't use that much to create a big chain
         ArrayList<Boolean> result = new ArrayList<>();
         result.add(oppChainLength == 1);
-        result.add(emptySpaceLeft <= 24);
+        result.add(emptySpaceLeft <= spaceLeftHeuristic);
+        result.add(mGLayers[0].getGarbage() >= garbageSatisfy);
         return result;
     }
 
@@ -123,8 +140,9 @@ public class PMS implements Strategy {
         if (root.getGarbage() == -1) {
             if (depth < maxDepth) {
                 List<Node> children = generatePoss(root, currentPuyo[depth]);
+                int totalLeafNodes = 0;
                 for (Node child : children) {
-                    recursiveTree(child, depth + 1, maxDepth, colours, currentPuyo);
+                    totalLeafNodes += recursiveTree(child, depth + 1, maxDepth, colours, currentPuyo);
                     if (child.getGarbage() >= mGLayers[depth].getGarbage()) {
                         mGLayers[depth] = child;
                     }
@@ -133,6 +151,7 @@ public class PMS implements Strategy {
                     }
                 }
                 root.addChildren(children);
+                return totalLeafNodes;
             } else if (depth == maxDepth) {
                 List<Node> children = maxDepth == 2 ? generatePoss(root, currentPuyo[depth]) : generateDepth4Layer(root, colours);
                 for (Node child : children) {
@@ -150,14 +169,14 @@ public class PMS implements Strategy {
         return 0;
     }
 
-    private Node selectNode(List<Boolean> heuristics){
+    private Node selectNode(List<Boolean> heuristics, int oppLength){
         if (heuristics.contains(true)){
             if (mGLayers[0].getGarbage() > -1)
                 return mGLayers[0];
         }
         else {
             Node mostGarbage = new Node();
-            for (int i = 1; i < mGLayers.length; i ++){
+            for (int i = 1; i < Math.min(mGLayers.length, oppLength); i ++){
                 if (mGLayers[i].getGarbage() >= mostGarbage.getGarbage())
                     mostGarbage = mGLayers[i];
             }
@@ -165,9 +184,9 @@ public class PMS implements Strategy {
                 return mostGarbage;
         }
         Node mostConnections = new Node();
-        for (Node maxConnectionsNodeLayer : maxConnectionsNodeLayers) {
-            if (maxConnectionsNodeLayer.getConnections() >= mostConnections.getConnections())
-                mostConnections = maxConnectionsNodeLayer;
+        for (int i = 0; i < Math.min(maxConnectionsNodeLayers.length, oppLength); i ++) {
+            if (maxConnectionsNodeLayers[i].getConnections() >= mostConnections.getConnections())
+                mostConnections = maxConnectionsNodeLayers[i];
         }
         if (mostConnections.getConnections() > 0)
             return mostConnections;
