@@ -6,6 +6,7 @@ import java.util.List;
 public interface ChainI {
     void resetChain(); // Don't need tests
     boolean isPopping(List<int[]> recentlyDropped);
+    boolean isPopping();
     ArrayList<int[]> chainTurn(ArrayList<int[]> recentlyDropped);
     // Returns the next recentlyDropped Puyo
     int score();

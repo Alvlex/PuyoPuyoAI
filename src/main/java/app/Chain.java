@@ -96,6 +96,11 @@ public class Chain implements ChainI{
         return popIncoming(findPops(recentlyDropped));
     }
 
+    @Override
+    public boolean isPopping(){
+        return popIncoming(findPops(board.findAllPuyo()));
+    }
+
     private boolean popIncoming(ArrayList<ArrayList<int[]>> groups){
         for (ArrayList<int[]> group: groups){
             if (group.size() >= 4){
@@ -114,6 +119,10 @@ public class Chain implements ChainI{
                 }
             }
         }
+    }
+
+    public ArrayList<int[]> chainTurn(){
+        return chainTurn(board.findAllPuyo());
     }
 
     @Override

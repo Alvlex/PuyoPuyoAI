@@ -53,7 +53,7 @@ public class Node {
         return connections;
     }
 
-    void addChildren(Collection<Node> nodes){
+    public void addChildren(Collection<Node> nodes){
         children.addAll(nodes);
     }
 
@@ -61,7 +61,7 @@ public class Node {
         return new ArrayList<>(children);
     }
 
-    Board getBoard(){
+    public Board getBoard(){
         return b;
     }
 
