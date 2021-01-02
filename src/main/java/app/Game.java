@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Game {
     public Player[] players;
-    private ArrayList<int[]>[] recentlyDropped;
+    private ArrayList<Coordinate>[] recentlyDropped;
     private Output output;
     private int turn = 0;
 
@@ -23,15 +23,15 @@ public class Game {
         setup(b, al, strategies);
     }
 
-    public Game(Board b, ArrayList<int[]> startChain){
+    public Game(Board b, ArrayList<Coordinate> startChain){
         setup(new Board[]{b}, new ArrayList[]{startChain}, new Strategy[]{new RandomStrategy()});
     }
 
-    public Game(Board[] b, ArrayList<int[]>[] startChain){
+    public Game(Board[] b, ArrayList<Coordinate>[] startChain){
         setup(b, startChain, new Strategy[]{new RandomStrategy(), new RandomStrategy()});
     }
 
-    private void setup(Board[] b, ArrayList<int[]>[] startChain, Strategy[] strategies){
+    private void setup(Board[] b, ArrayList<Coordinate>[] startChain, Strategy[] strategies){
         players = new Player[b.length];
         output = new Output(b);
         for (int i = 0; i < players.length; i ++) {

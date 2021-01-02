@@ -18,36 +18,41 @@ public class Chain implements ChainI{
         chain.clear();
     }
 
-    private ArrayList<int[]> findAdjacent(int col, int row){
-        ArrayList<int[]> result = new ArrayList<>();
+    private ArrayList<Coordinate> findAdjacent(Coordinate c){
+        return findAdjacent(c.getX(), c.getY());
+    }
+
+    private ArrayList<Coordinate> findAdjacent(int col, int row){
+        ArrayList<Coordinate> result = new ArrayList<>();
         if (col > 0){
             if (board.getPuyo(col - 1, row) != null){
-                result.add(new int[]{col - 1, row});
+                result.add(new Coordinate(col - 1, row));
             }
         }
         if (col < board.getNoCols() - 1){
             if (board.getPuyo(col + 1, row) != null){
-                result.add(new int[]{col + 1, row});
+                result.add(new Coordinate(col + 1, row));
             }
         }
         if (row > 0){
             if (board.getPuyo(col, row - 1) != null){
-                result.add(new int[]{col, row - 1});
+                result.add(new Coordinate(col, row - 1));
             }
         }
         if (row < board.getNoRows() - 1){
             if (board.getPuyo(col, row + 1) != null){
-                result.add(new int[]{col, row + 1});
+                result.add(new Coordinate(col, row + 1));
             }
         }
         return result;
     }
 
-    private ArrayList<ArrayList<int[]>> findPops(List<int[]> recentlyDropped){
-        ArrayList<ArrayList<int[]>> groupsThatPop = new ArrayList<>();
-        for (int[] pos: recentlyDropped){
+    @Override
+    public ArrayList<ArrayList<Coordinate>> findPops(List<Coordinate> recentlyDropped){
+        ArrayList<ArrayList<Coordinate>> groupsThatPop = new ArrayList<>();
+        for (Coordinate pos: recentlyDropped){
             boolean skip = false;
-            for (ArrayList<int[]> group: groupsThatPop){
+            for (ArrayList<Coordinate> group: groupsThatPop){
                 if (contains(group, pos)){
                     skip = true;
                     break;
@@ -58,17 +63,17 @@ public class Chain implements ChainI{
             }
             catch(NullPointerException e){
                 String message = new Output(new Board[]{board}).printBoards();
-                message += "\n" + pos[0] + ", " + pos[1];
+                message += "\n" + pos.getX() + ", " + pos.getY();
                 throw new RuntimeException(message);
             }
-            ArrayList<int[]> connected = new ArrayList<>();
+            ArrayList<Coordinate> connected = new ArrayList<>();
             connected.add(pos);
-            ArrayList<int[]> toCheck = findAdjacent(pos[0], pos[1]);
+            ArrayList<Coordinate> toCheck = findAdjacent(pos);
             while(!toCheck.isEmpty()){
-                int[] currentCheck = toCheck.remove(0);
+                Coordinate currentCheck = toCheck.remove(0);
                 if (board.getPuyo(currentCheck).getColour().equals(board.getPuyo(pos).getColour()) && !contains(connected, currentCheck)){
                     connected.add(currentCheck);
-                    toCheck.addAll(findAdjacent(currentCheck[0], currentCheck[1]));
+                    toCheck.addAll(findAdjacent(currentCheck));
                 }
             }
             groupsThatPop.add(connected);
@@ -76,23 +81,16 @@ public class Chain implements ChainI{
         return groupsThatPop;
     }
 
-    private boolean contains(ArrayList<int[]> array, int[] check){
-        for (int[] itemList: array){
-            if (itemList.length != check.length)
-                continue;
-            int noOfMatches = 0;
-            for (int i = 0; i < itemList.length; i ++){
-                if (itemList[i] == check[i])
-                    noOfMatches ++;
-            }
-            if (noOfMatches == check.length)
+    private boolean contains(ArrayList<Coordinate> array, Coordinate check){
+        for (Coordinate itemList: array){
+            if (itemList.getX() == check.getX() && itemList.getY() == check.getY())
                 return true;
         }
         return false;
     }
 
     @Override
-    public boolean isPopping(List<int[]> recentlyDropped){
+    public boolean isPopping(List<Coordinate> recentlyDropped){
         return popIncoming(findPops(recentlyDropped));
     }
 
@@ -101,8 +99,8 @@ public class Chain implements ChainI{
         return popIncoming(findPops(board.findAllPuyo()));
     }
 
-    private boolean popIncoming(ArrayList<ArrayList<int[]>> groups){
-        for (ArrayList<int[]> group: groups){
+    private boolean popIncoming(ArrayList<ArrayList<Coordinate>> groups){
+        for (ArrayList<Coordinate> group: groups){
             if (group.size() >= 4){
                 return true;
             }
@@ -110,10 +108,10 @@ public class Chain implements ChainI{
         return false;
     }
 
-    private void popGroup(ArrayList<int[]> group){
-        for (int[] coords: group){
+    private void popGroup(ArrayList<Coordinate> group){
+        for (Coordinate coords: group){
             board.removePuyo(coords);
-            for(int[] pos: findAdjacent(coords[0],coords[1])){
+            for(Coordinate pos: findAdjacent(coords)){
                 if (board.getPuyo(pos).getColour().equals("GREY")){
                     board.removePuyo(pos);
                 }
@@ -121,15 +119,15 @@ public class Chain implements ChainI{
         }
     }
 
-    public ArrayList<int[]> chainTurn(){
+    public ArrayList<Coordinate> chainTurn(){
         return chainTurn(board.findAllPuyo());
     }
 
     @Override
-    public ArrayList<int[]> chainTurn(ArrayList<int[]> recentlyDropped){
-        ArrayList<ArrayList<int[]>> groups = findPops(recentlyDropped);
+    public ArrayList<Coordinate> chainTurn(ArrayList<Coordinate> recentlyDropped){
+        ArrayList<ArrayList<Coordinate>> groups = findPops(recentlyDropped);
         int totalPuyo = 0;
-        for (ArrayList<int[]> group: groups){
+        for (ArrayList<Coordinate> group: groups){
             if (group.size() >= 4){
                 totalPuyo += group.size();
                 popGroup(group);
@@ -154,7 +152,7 @@ public class Chain implements ChainI{
     }
 
     @Override
-    public void runChain(ArrayList<int[]> recDrop){
+    public void runChain(ArrayList<Coordinate> recDrop){
         while(isPopping(recDrop)){
             recDrop = chainTurn(recDrop);
         }

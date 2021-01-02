@@ -2,6 +2,7 @@ package appTest;
 
 import app.Board;
 import app.Chain;
+import app.Coordinate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +63,7 @@ public class unitTestsChain {
 
     @Test
     public void scoreChain4Test(){
-        ArrayList<int[]> recDropped = chain4.chainTurn();
+        ArrayList<Coordinate> recDropped = chain4.chainTurn();
         for (int i = 0; i < 3; i ++) {
             recDropped = chain4.chainTurn(recDropped);
         }

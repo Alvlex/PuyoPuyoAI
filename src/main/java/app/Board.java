@@ -67,8 +67,8 @@ public class Board implements BoardI{
     }
 
     @Override
-    public ArrayList<int[]> cascadePuyo(){
-        ArrayList<int[]> dropped = new ArrayList<>();
+    public ArrayList<Coordinate> cascadePuyo(){
+        ArrayList<Coordinate> dropped = new ArrayList<>();
         for (int col = 0; col < getNoCols(); col ++){
             int noOfSpaces = 0;
             for (int row = 0; row < getNoRows(); row ++){
@@ -78,7 +78,7 @@ public class Board implements BoardI{
                 else if (noOfSpaces > 0){
                     board[col][row - noOfSpaces] = board[col][row];
                     board[col][row] = null;
-                    dropped.add(new int[]{col, row - noOfSpaces});
+                    dropped.add(new Coordinate(col, row - noOfSpaces));
                 }
             }
         }
@@ -103,8 +103,14 @@ public class Board implements BoardI{
         return board[col][row].copyPuyo();
     }
     @Override
-    public Puyo getPuyo(int[] pos){
-        return getPuyo(pos[0], pos[1]);
+    public Puyo getPuyo(Coordinate pos){
+        return getPuyo(pos.getX(), pos.getY());
+    }
+
+    public Puyo getPuyoObj(int col, int row){
+        if (board[col][row] == null)
+            return null;
+        return board[col][row];
     }
 
     @Override
@@ -121,8 +127,8 @@ public class Board implements BoardI{
         board[col][row] = null;
     }
     @Override
-    public void removePuyo(int[] pos){
-        board[pos[0]][pos[1]] = null;
+    public void removePuyo(Coordinate pos){
+        board[pos.getX()][pos.getY()] = null;
     }
 
     @Override
@@ -159,12 +165,12 @@ public class Board implements BoardI{
     }
 
     @Override
-    public ArrayList<int[]> findAllPuyo(){
-        ArrayList<int[]> allPuyo = new ArrayList<>();
+    public ArrayList<Coordinate> findAllPuyo(){
+        ArrayList<Coordinate> allPuyo = new ArrayList<>();
         for (int i = 0; i < getNoCols(); i ++){
             for (int j = 0; j < getNoRows(); j ++){
                 if (getPuyo(i,j) != null)
-                    allPuyo.add(new int[]{i,j});
+                    allPuyo.add(new Coordinate(i,j));
             }
         }
         return allPuyo;

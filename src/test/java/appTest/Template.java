@@ -14,7 +14,7 @@ import com.opencsv.CSVReader;
 
 public class Template {
 
-    Board b;
+    public Board b;
 
     public Template(String file){
         b = readBoard(file);

@@ -5,11 +5,12 @@ import java.util.List;
 
 public interface ChainI {
     void resetChain(); // Don't need tests
-    boolean isPopping(List<int[]> recentlyDropped);
+    boolean isPopping(List<Coordinate> recentlyDropped);
     boolean isPopping();
-    ArrayList<int[]> chainTurn(ArrayList<int[]> recentlyDropped);
+    ArrayList<Coordinate> chainTurn(ArrayList<Coordinate> recentlyDropped);
     // Returns the next recentlyDropped Puyo
     int score();
     int chainLength(); // Don't need tests
-    void runChain(ArrayList<int[]> recDrop);
+    void runChain(ArrayList<Coordinate> recDrop);
+    ArrayList<ArrayList<Coordinate>> findPops(List<Coordinate> recentlyDropped);
 }

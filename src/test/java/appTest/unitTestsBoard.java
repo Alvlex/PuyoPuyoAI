@@ -52,10 +52,17 @@ public class unitTestsBoard {
 
     @Test
     public void cascadePuyoReturnTest(){
-        ArrayList<int[]> actual = cascade2.getBoard().cascadePuyo();
-        int[][] expected = {{0,0}, {1,0}, {1,1}, {1,2}};
-        Assert.assertArrayEquals(actual.toArray(), expected);
+        ArrayList<Coordinate> actual = cascade2.getBoard().cascadePuyo();
+        Coordinate[] expected = {new Coordinate(0,0), new Coordinate(1,0),
+                new Coordinate(1,1), new Coordinate(1,2)};
+        assertCoordinatesEqual(actual, expected);
+    }
 
+    private void assertCoordinatesEqual(ArrayList<Coordinate> c1, Coordinate[] c2){
+        for (int i = 0; i < c1.size(); i ++){
+            Assert.assertEquals(c1.get(i).getX(), c2[i].getX());
+            Assert.assertEquals(c1.get(i).getY(), c2[i].getY());
+        }
     }
 
     @Test

@@ -34,9 +34,11 @@ public class unitTestsPlayer {
     @Test
     public void findRecentlyDroppedTest(){
         Move m = p.turn();
-        List<int[]> test = p.findRecentlyDropped(m);
-        Assert.assertArrayEquals(test.get(0), new int[]{0,1});
-        Assert.assertArrayEquals(test.get(1), new int[]{0,0});
+        List<Coordinate> test = p.findRecentlyDropped(m);
+        Assert.assertEquals(test.get(0).getX(), 0);
+        Assert.assertEquals(test.get(0).getY(), 1);
+        Assert.assertEquals(test.get(0).getX(), 0);
+        Assert.assertEquals(test.get(1).getY(), 0);
     }
 
     private Puyo[][] copyPuyoList(Puyo[][] p){

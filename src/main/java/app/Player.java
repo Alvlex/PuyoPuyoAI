@@ -35,6 +35,7 @@ public class Player implements PlayerI{
         return turn(new Board());
     }
 
+    @Override
     public Move turn(Board oppBoard){
         Move move;
         if (s instanceof PMS)
@@ -45,11 +46,12 @@ public class Player implements PlayerI{
         return move;
     }
 
-    public List<int[]> findRecentlyDropped(Move m){
+    @Override
+    public List<Coordinate> findRecentlyDropped(Move m){
         int[][] coords = m.getCoord();
-        ArrayList<int[]> result = new ArrayList<>();
-        result.add(new int[]{coords[0][0], board.peekCol(coords[0][0]) - coords[0][1]});
-        result.add(new int[]{coords[1][0], board.peekCol(coords[1][0]) - coords[1][1]});
+        ArrayList<Coordinate> result = new ArrayList<>();
+        result.add(new Coordinate(coords[0][0], board.peekCol(coords[0][0]) - coords[0][1]));
+        result.add(new Coordinate(coords[1][0], board.peekCol(coords[1][0]) - coords[1][1]));
         return result;
     }
 }
