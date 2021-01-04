@@ -4,6 +4,7 @@ import AI.HumanStrategy;
 import AI.RandomStrategy;
 import AI.Strategy;
 import AI.pms.PMS;
+import AI.tms.TMS;
 
 import java.util.ArrayList;
 
@@ -45,7 +46,7 @@ public class Game {
         boolean popping = players[0].chain.isPopping(recentlyDropped[0]);
         while((players[0].board.checkPossibilities() || popping) && turn < noOfTurns && max == 0) {
             updateTurn();
-            if (popping && false) {
+            if (popping || true) {
                 System.out.println(output.printBoards());
             }
             popping = singlePlayerHelper(0, popping, new Board());
@@ -55,7 +56,7 @@ public class Game {
             }
         }
         updateTurn();
-        if (false) {
+        if (true) {
             System.out.println(output.printBoards());
             System.out.println("GAME OVER");
         }
@@ -135,7 +136,8 @@ public class Game {
     }
 
     public static void main(String[] args){
-        Game g = new Game(new Strategy[]{new PMS(3, 16, 320)});
+//        Game g = new Game(new Strategy[]{new PMS(3, 16, 320)});
+        Game g = new Game(new Strategy[]{new TMS()});
         g.play();
     }
 }

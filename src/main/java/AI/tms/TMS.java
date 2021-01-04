@@ -1,6 +1,7 @@
 package AI.tms;
 
 import AI.Strategy;
+import AI.pms.PMS;
 import app.*;
 
 import java.util.ArrayList;
@@ -10,26 +11,38 @@ public class TMS implements Strategy {
 
     List<Node> depth3 = new ArrayList<>();
     List<Template> templates = new ArrayList<>();
+    PMS pms = new PMS(3, 10, 120);
+    boolean chainMade = false;
+
+    public TMS(){
+        templates.add(new Template("TMS1.csv"));
+        templates.add(new Template("TMS2.csv"));
+    }
 
 
     @Override
     public Move makeMove(Board b, Puyo[][] currentPuyo) {
+        if (chainMade)
+            return pms.makeMove(b, currentPuyo);
         Node root = new Node(b, null);
         recursiveTree(root, 0, 2, currentPuyo);
-        double highestScore = 0;
+        double highestScore = Double.NEGATIVE_INFINITY;
         Node selectedNode = null;
         for (Node depth3Node: depth3){
             short[][] matrix = generateStateMatrix(depth3Node.getBoard());
             for (Template t: templates){
                 double score = getScore(matrix, t);
-                if (score > highestScore){
+                if (score >= highestScore){
                     highestScore  = score;
                     selectedNode = depth3Node;
                 }
             }
         }
-
-        return findNextMove(root, selectedNode, currentPuyo[0]);
+        if (highestScore >= 0.99)
+            chainMade = true;
+        Move m = findNextMove(root, selectedNode, currentPuyo[0]);
+        b.dropPuyo(currentPuyo[0], m);
+        return m;
     }
 
     private Move findNextMove(Node root, Node target, Puyo[] puyo){
