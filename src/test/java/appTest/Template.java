@@ -17,11 +17,14 @@ public class Template {
     public Board b;
 
     public Template(String file){
-        b = readBoard(file);
+        b = readBoard("templates/" + file);
+    }
+    public Template(String directory, String file){
+        b = readBoard(directory + "/" + file);
     }
 
     private Board readBoard(String file){
-        File f = getFileFromResource("templates/" + file);
+        File f = getFileFromResource(file);
         Puyo[][] board = new Puyo[6][13];
         try (FileReader fr = new FileReader(f);
             CSVReader reader = new CSVReader(fr)) {

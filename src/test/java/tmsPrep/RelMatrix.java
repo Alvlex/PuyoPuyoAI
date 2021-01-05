@@ -1,7 +1,12 @@
 package tmsPrep;
 
+import app.Board;
+import app.Chain;
 import app.Coordinate;
+import app.Puyo;
+import appTest.Template;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -10,7 +15,15 @@ public class RelMatrix {
     char[][] relMatrix;
     char[] sortedLetters;
 
-    RelMatrix(LabelledCells lc){
+    RelMatrix(LabelledCells lc, Template chain){
+        Board board = chain.b.copyBoard();
+        Puyo[][] shallowCopy = new Puyo[6][13];
+        for (int i = 0; i < 6; i ++){
+            for (int j = 0; j < 13; j ++){
+                shallowCopy[i][j] = board.getPuyoObj(i,j);
+            }
+        }
+        Chain ch = new Chain(board);
         char[][] cells = lc.cells;
         HashSet<Character> letters = new HashSet<>();
         for (int i = 0; i < cells.length; i ++){
@@ -47,6 +60,23 @@ public class RelMatrix {
                 }
             }
         }
+        ArrayList<Coordinate> recDropped;
+        while(ch.isPopping()){
+            recDropped = ch.chainTurn();
+            for (Coordinate c: recDropped){
+                Coordinate c1 = lc.findPuyoInBoard(shallowCopy, board.getPuyoObj(c.getX(), c.getY()));
+                char label1 = lc.cells[c1.getX()][c1.getY()];
+                for (Coordinate c2: ch.findAdjacent(c)) {
+                    Coordinate c2Linked = lc.findPuyoInBoard(shallowCopy, board.getPuyoObj(c2.getX(), c2.getY()));
+                    char label2 = lc.cells[c2Linked.getX()][c2Linked.getY()];
+                    if (label1 != label2 && label2 != '0'){
+                        setCell(label1, label2, 'X');
+                        setCell(label2, label1, 'X');
+                    }
+                }
+            }
+        }
+
         print();
     }
 

@@ -18,11 +18,11 @@ public class Chain implements ChainI{
         chain.clear();
     }
 
-    private ArrayList<Coordinate> findAdjacent(Coordinate c){
+    public ArrayList<Coordinate> findAdjacent(Coordinate c){
         return findAdjacent(c.getX(), c.getY());
     }
 
-    private ArrayList<Coordinate> findAdjacent(int col, int row){
+    public ArrayList<Coordinate> findAdjacent(int col, int row){
         ArrayList<Coordinate> result = new ArrayList<>();
         if (col > 0){
             if (board.getPuyo(col - 1, row) != null){
