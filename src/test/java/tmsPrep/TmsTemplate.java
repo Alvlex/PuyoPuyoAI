@@ -10,7 +10,8 @@ public class TmsTemplate {
     int[][] templateMatrix = new int[78][78];
 
 
-    public TmsTemplate(String chainFile, String templateFile, String outputFile){
+    public TmsTemplate(String chainFile){
+        String templateFile = chainFile.replace("Chain", "");
         Template chain = new Template("tmsTemplates", chainFile);
         Template template = new Template("tmsTemplates", templateFile);
         LabelledCells lc = new LabelledCells(chain, template);
@@ -30,7 +31,7 @@ public class TmsTemplate {
             }
         }
         try {
-            FileWriter fw = new FileWriter(new File("src/main/java/AI/tms/templates/" + outputFile));
+            FileWriter fw = new FileWriter(new File("src/main/java/AI/tms/templates/" + templateFile));
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 78; i ++){
                 for (int j = 0; j < 78; j ++){
@@ -47,7 +48,7 @@ public class TmsTemplate {
     }
 
     public static void main(String[] args){
-        TmsTemplate tms = new TmsTemplate("TMS3Chain.csv", "TMS3.csv", "TMS3.csv");
+        TmsTemplate tms = new TmsTemplate("GtrFlatChain.csv");
     }
 
 }

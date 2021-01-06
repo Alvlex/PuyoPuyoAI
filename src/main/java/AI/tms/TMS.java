@@ -10,10 +10,10 @@ import java.util.List;
 
 public class TMS implements Strategy {
 
-    List<Node> depth3 = new ArrayList<>();
-    List<Template> templates = new ArrayList<>();
-    PMS pms = new PMS(3, 10, 120);
-    boolean chainMade = false;
+    private List<Node> depth3 = new ArrayList<>();
+    private ArrayList<Template> templates = new ArrayList<>();
+    private PMS pms = new PMS(2, 8, 120);
+    private boolean chainMade = false;
     private double averageTime;
     private int turn = 0;
 
@@ -23,48 +23,70 @@ public class TMS implements Strategy {
         templates.add(new Template("TMS3.csv"));
     }
 
-
     @Override
     public Move makeMove(Board b, Puyo[][] currentPuyo) {
+        if (templates.size() == 0){
+            Output o = new Output(new Board[]{b});
+            throw new RuntimeException("No valid template to follow!\n" + o.printBoards());
+        }
+        depth3.clear();
         turn ++;
         Date d = new Date();
         if (chainMade)
             return pms.makeMove(b, currentPuyo);
         Node root = new Node(b, null);
+        Date d2 = new Date();
         recursiveTree(root, 0, 2, currentPuyo);
+        System.out.println("Time to make tree: " + (new Date().getTime() - d2.getTime()));
         double highestScore = Double.NEGATIVE_INFINITY;
-        Node selectedNode = null;
+        if (depth3.size() == 0){
+            Output o = new Output(new Board[]{b});
+            o.updateCurrentPuyo(currentPuyo, 0);
+            throw new RuntimeException("\n" + o.printCurrentPuyo() + "\n" + o.printBoards());
+        }
+        Node selectedNode = depth3.get(0);
+        Date d3 = new Date();
+        double[] scores = new double[templates.size()];
         for (Node depth3Node: depth3){
             short[][] matrix = generateStateMatrix(depth3Node.getBoard());
-            for (Template t: templates){
-                double score = getScore(matrix, t);
-                if (score >= highestScore){
-                    highestScore  = score;
+            for (int i = 0; i < templates.size(); i ++){
+                double[] tempScores = new double[templates.size()];
+                tempScores[i] = getScore(matrix, templates.get(i));
+                if (tempScores[i] >= highestScore){
+                    scores = tempScores;
+                    highestScore  = scores[i];
                     selectedNode = depth3Node;
                 }
             }
         }
+        for (int i = scores.length - 1; i >= 0; i --){
+            if (scores[i] == Double.NEGATIVE_INFINITY)
+                templates.remove(i);
+        }
+        System.out.println("Time to select node: " + (new Date().getTime() - d3.getTime()));
         if (highestScore >= 0.99)
             chainMade = true;
-        Move m = findNextMove(root, selectedNode, currentPuyo[0]);
+        Move m = findNextMove(root, selectedNode, currentPuyo);
         b.dropPuyo(currentPuyo[0], m);
         averageTime = (1 - 1.0 / turn) * averageTime + (1.0 / turn) * (new Date().getTime() - d.getTime());
         return m;
     }
 
-    public void printStats(){
-        System.out.println("Average Time: " + averageTime);
+    public double getAverageTime(){
+        return averageTime;
     }
 
-    private Move findNextMove(Node root, Node target, Puyo[] puyo){
+    private Move findNextMove(Node root, Node target, Puyo[][] currentPuyo){
         Node temp = target;
         while(temp.getParent() != root){
             temp = temp.getParent();
             if (temp == null){
-                throw new RuntimeException("Parent is null");
+                Output o = new Output(new Board[]{root.getBoard()});
+                o.updateCurrentPuyo(currentPuyo, 0);
+                throw new RuntimeException("Parent is null\n" + o.printCurrentPuyo() + "\n" + o.printBoards());
             }
         }
-        return findDiff(root, temp, puyo);
+        return findDiff(root, temp, currentPuyo[0]);
     }
 
     private Move findDiff(Node first, Node second, Puyo[] puyo){
