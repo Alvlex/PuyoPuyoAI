@@ -46,7 +46,7 @@ public class Game {
         boolean popping = players[0].chain.isPopping(recentlyDropped[0]);
         while((players[0].board.checkPossibilities() || popping) && turn < noOfTurns && max == 0) {
             updateTurn();
-            if (popping || true) {
+            if (popping && false) {
                 System.out.println(output.printBoards());
             }
             popping = singlePlayerHelper(0, popping, new Board());
@@ -56,7 +56,7 @@ public class Game {
             }
         }
         updateTurn();
-        if (true) {
+        if (false) {
             System.out.println(output.printBoards());
             System.out.println("GAME OVER");
         }

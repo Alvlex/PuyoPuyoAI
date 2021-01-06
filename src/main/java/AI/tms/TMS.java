@@ -5,6 +5,7 @@ import AI.pms.PMS;
 import app.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TMS implements Strategy {
@@ -13,15 +14,20 @@ public class TMS implements Strategy {
     List<Template> templates = new ArrayList<>();
     PMS pms = new PMS(3, 10, 120);
     boolean chainMade = false;
+    private double averageTime;
+    private int turn = 0;
 
     public TMS(){
         templates.add(new Template("TMS1.csv"));
         templates.add(new Template("TMS2.csv"));
+        templates.add(new Template("TMS3.csv"));
     }
 
 
     @Override
     public Move makeMove(Board b, Puyo[][] currentPuyo) {
+        turn ++;
+        Date d = new Date();
         if (chainMade)
             return pms.makeMove(b, currentPuyo);
         Node root = new Node(b, null);
@@ -42,7 +48,12 @@ public class TMS implements Strategy {
             chainMade = true;
         Move m = findNextMove(root, selectedNode, currentPuyo[0]);
         b.dropPuyo(currentPuyo[0], m);
+        averageTime = (1 - 1.0 / turn) * averageTime + (1.0 / turn) * (new Date().getTime() - d.getTime());
         return m;
+    }
+
+    public void printStats(){
+        System.out.println("Average Time: " + averageTime);
     }
 
     private Move findNextMove(Node root, Node target, Puyo[] puyo){
