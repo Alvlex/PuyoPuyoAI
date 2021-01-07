@@ -7,8 +7,10 @@ import java.io.FileReader;
 
 public class Template {
     int[][] matrix = new int[78][78];
+    String name;
 
     Template(String fileName){
+        name = fileName.replace(".csv", "");
         readBoard(fileName);
     }
 

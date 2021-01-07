@@ -12,32 +12,43 @@ public class TMS implements Strategy {
 
     private List<Node> depth3 = new ArrayList<>();
     private ArrayList<Template> templates = new ArrayList<>();
-    private PMS pms = new PMS(2, 8, 120);
+    private PMS pms = new PMS(3, 8, 120);
     private boolean chainMade = false;
     private double averageTime;
     private int turn = 0;
 
     public TMS(){
-        templates.add(new Template("TMS1.csv"));
-        templates.add(new Template("TMS2.csv"));
-        templates.add(new Template("TMS3.csv"));
+        templates.add(new Template("Andromeda.csv"));
+        templates.add(new Template("deAlice.csv"));
+        templates.add(new Template("Diving.csv"));
+        templates.add(new Template("GtrFlat.csv"));
+        templates.add(new Template("GtrLShape.csv"));
+        templates.add(new Template("Landslide.csv"));
+        templates.add(new Template("Sandwich2-1-1.csv"));
+        templates.add(new Template("Stairs3-1.csv"));
+        templates.add(new Template("Turukame.csv"));
+        templates.add(new Template("Yayoi.csv"));
     }
 
     @Override
     public Move makeMove(Board b, Puyo[][] currentPuyo) {
         if (templates.size() == 0){
-            Output o = new Output(new Board[]{b});
-            throw new RuntimeException("No valid template to follow!\n" + o.printBoards());
+            return pms.makeMove(b, currentPuyo);
+//            Output o = new Output(new Board[]{b});
+//            throw new RuntimeException("No valid template to follow!\n" + o.printBoards());
         }
         depth3.clear();
         turn ++;
         Date d = new Date();
         if (chainMade)
             return pms.makeMove(b, currentPuyo);
+        for (int i = templates.size() - 1; i >= 0; i --){
+            if (getScore(generateStateMatrix(b), templates.get(i)) == Double.NEGATIVE_INFINITY){
+                templates.remove(i);
+            }
+        }
         Node root = new Node(b, null);
-        Date d2 = new Date();
         recursiveTree(root, 0, 2, currentPuyo);
-        System.out.println("Time to make tree: " + (new Date().getTime() - d2.getTime()));
         double highestScore = Double.NEGATIVE_INFINITY;
         if (depth3.size() == 0){
             Output o = new Output(new Board[]{b});
@@ -45,25 +56,16 @@ public class TMS implements Strategy {
             throw new RuntimeException("\n" + o.printCurrentPuyo() + "\n" + o.printBoards());
         }
         Node selectedNode = depth3.get(0);
-        Date d3 = new Date();
-        double[] scores = new double[templates.size()];
         for (Node depth3Node: depth3){
             short[][] matrix = generateStateMatrix(depth3Node.getBoard());
             for (int i = 0; i < templates.size(); i ++){
-                double[] tempScores = new double[templates.size()];
-                tempScores[i] = getScore(matrix, templates.get(i));
-                if (tempScores[i] >= highestScore){
-                    scores = tempScores;
-                    highestScore  = scores[i];
+                double score = getScore(matrix, templates.get(i));
+                if (score >= highestScore){
+                    highestScore  = score;
                     selectedNode = depth3Node;
                 }
             }
         }
-        for (int i = scores.length - 1; i >= 0; i --){
-            if (scores[i] == Double.NEGATIVE_INFINITY)
-                templates.remove(i);
-        }
-        System.out.println("Time to select node: " + (new Date().getTime() - d3.getTime()));
         if (highestScore >= 0.99)
             chainMade = true;
         Move m = findNextMove(root, selectedNode, currentPuyo);
@@ -74,6 +76,14 @@ public class TMS implements Strategy {
 
     public double getAverageTime(){
         return averageTime;
+    }
+    public String getTemplate(){
+        if (templates.size() == 1){
+            return templates.get(0).name;
+        }
+        else {
+            return templates.size() + "";
+        }
     }
 
     private Move findNextMove(Node root, Node target, Puyo[][] currentPuyo){

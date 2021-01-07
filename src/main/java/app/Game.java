@@ -15,30 +15,25 @@ public class Game {
     private int turn = 0;
 
     public Game(Strategy[] strategies){
+        setup(strategies, new int[]{0,0});
+    }
+
+    public Game(Strategy[] strategies, int randomSeed){
+        setup(strategies, new int[]{randomSeed,randomSeed});
+    }
+
+    private void setup(Strategy[] strategies, int[] randomSeeds){
         Board[] b = new Board[strategies.length];
-        ArrayList[] al = new ArrayList[strategies.length];
+        recentlyDropped = new ArrayList[2];
         for (int i = 0; i < strategies.length; i ++){
+            recentlyDropped[i] = new ArrayList<>();
             b[i] = new Board();
-            al[i] = new ArrayList<int[]>();
         }
-        setup(b, al, strategies);
-    }
-
-    public Game(Board b, ArrayList<Coordinate> startChain){
-        setup(new Board[]{b}, new ArrayList[]{startChain}, new Strategy[]{new RandomStrategy()});
-    }
-
-    public Game(Board[] b, ArrayList<Coordinate>[] startChain){
-        setup(b, startChain, new Strategy[]{new RandomStrategy(), new RandomStrategy()});
-    }
-
-    private void setup(Board[] b, ArrayList<Coordinate>[] startChain, Strategy[] strategies){
         players = new Player[b.length];
         output = new Output(b);
         for (int i = 0; i < players.length; i ++) {
-            players[i] = new Player(b[i], 4, strategies[i]);
+            players[i] = new Player(b[i], 4, strategies[i], randomSeeds[i]);
         }
-        recentlyDropped = startChain;
     }
 
     private int playSinglePlayer(int noOfTurns){

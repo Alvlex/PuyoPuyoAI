@@ -7,6 +7,7 @@ import AI.pms.PMS;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Player implements PlayerI{
     public Puyo[][] currentPuyo;
@@ -15,10 +16,12 @@ public class Player implements PlayerI{
     Garbage garbage;
     private int noOfColours;
     public Strategy s;
+    private Random x;
 
-    public Player(Board b, int noOfColours, Strategy s){
+    public Player(Board b, int noOfColours, Strategy s, int randomSeed){
+        x = new Random(randomSeed);
         this.noOfColours = noOfColours;
-        currentPuyo = PuyoI.createInitialPuyo(noOfColours);
+        currentPuyo = PuyoI.createInitialPuyo(noOfColours, x);
         board = b;
         chain = new Chain(board);
         garbage = new Garbage(board);
@@ -28,7 +31,7 @@ public class Player implements PlayerI{
     private void getNextPuyo(){
         currentPuyo[0] = currentPuyo[1];
         currentPuyo[1] = currentPuyo[2];
-        currentPuyo[2] = PuyoI.create2Puyo(noOfColours);
+        currentPuyo[2] = PuyoI.create2Puyo(noOfColours, x);
     }
 
     public Move turn(){

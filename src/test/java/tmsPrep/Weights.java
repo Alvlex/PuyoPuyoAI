@@ -16,8 +16,9 @@ public class Weights {
             else if (Character.isLowerCase(letter))
                 weights.put(letter, 1);
             else{
-                System.out.println("What is the weight for " + letter);
-                weights.put(letter, x.nextInt());
+//                System.out.println("What is the weight for " + letter);
+//                weights.put(letter, x.nextInt());
+                weights.put(letter, 1000);
             }
         }
     }

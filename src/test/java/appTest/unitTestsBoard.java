@@ -3,6 +3,7 @@ import app.*;
 import org.junit.*;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class unitTestsBoard {
 
@@ -13,7 +14,7 @@ public class unitTestsBoard {
     private Template cascadeOutput = new Template("cascadeOutput.csv");
     private Template cascade2 = new Template("cascade2.csv");
 
-    private Puyo[] puyo = PuyoI.create2Puyo(4);
+    private Puyo[] puyo = PuyoI.create2Puyo(4, new Random(0));
     private Move move = new Move();
 
     @Test

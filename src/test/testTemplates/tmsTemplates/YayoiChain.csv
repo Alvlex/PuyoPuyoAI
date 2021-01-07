@@ -5,9 +5,9 @@ _,_,_,_,_,_
 _,_,_,_,_,_
 _,_,_,_,_,_
 R,_,_,_,_,_
-R,G,_,_,_,_
-G,R,R,_,_,B
-G,R,B,R,G,B
-G,Y,B,R,G,B
-R,R,Y,B,R,G
-Y,Y,B,R,G,B
+B,B,_,_,_,_
+B,B,_,G,G,Y
+R,Y,G,Y,G,Y
+R,R,B,R,Y,G
+Y,Y,Y,B,B,B
+R,R,R,G,G,G

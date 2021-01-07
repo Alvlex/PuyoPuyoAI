@@ -18,7 +18,7 @@ public class unitTestsPlayer {
     @Before
     public void prepare(){
         b = empty.getBoard();
-        p = new Player(b,  4, new TestingStrategy());
+        p = new Player(b,  4, new TestingStrategy(), 0);
         pastPuyo = copyPuyoList(p.currentPuyo);
     }
 

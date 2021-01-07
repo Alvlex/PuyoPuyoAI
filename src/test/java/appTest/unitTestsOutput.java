@@ -5,6 +5,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Random;
+
 public class unitTestsOutput {
 
     private Template empty = new Template("empty.csv");
@@ -12,13 +14,15 @@ public class unitTestsOutput {
     private Board b;
     private Output o2;
     private Puyo[][] puyo;
+    private Random x;
 
     @Before
     public void prepare(){
+        x = new Random(0);
         b = empty.getBoard();
         output = new Output(new Board[]{b});
         o2 = new Output(new Board[]{empty.getBoard()});
-        puyo = PuyoI.createInitialPuyo(4);
+        puyo = PuyoI.createInitialPuyo(4, x);
         output.updateCurrentPuyo(puyo, 0);
         o2.updateCurrentPuyo(puyo, 0);
     }
@@ -36,7 +40,7 @@ public class unitTestsOutput {
         Puyo[][] result = new Puyo[puyo.length][puyo[0].length];
         result[0] = puyo[1];
         result[1] = puyo[2];
-        result[2] = PuyoI.create2Puyo(4);
+        result[2] = PuyoI.create2Puyo(4, x);
         return result;
     }
 

@@ -6,19 +6,23 @@ import app.PuyoI;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Random;
+
 public class unitTestsPuyo {
+
+    private Random x = new Random(0);
 
     @Test
     public void create2PuyoTest(){
         for (int noOfColours = 1; noOfColours < Colour.values().length - 1; noOfColours ++) {
-            twoPuyoTestHelper(PuyoI.create2Puyo(noOfColours), noOfColours);
+            twoPuyoTestHelper(PuyoI.create2Puyo(noOfColours, x), noOfColours);
         }
     }
 
     @Test
     public void createInitialPuyoTest(){
         for (int noOfColours = 1; noOfColours < Colour.values().length - 1; noOfColours ++) {
-            Puyo[][] ps2 = PuyoI.createInitialPuyo(noOfColours);
+            Puyo[][] ps2 = PuyoI.createInitialPuyo(noOfColours, x);
             for (Puyo[] p: ps2){
                 twoPuyoTestHelper(p, noOfColours);
             }

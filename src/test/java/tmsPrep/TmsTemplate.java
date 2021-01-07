@@ -7,16 +7,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class TmsTemplate {
-    int[][] templateMatrix = new int[78][78];
 
 
-    public TmsTemplate(String chainFile){
+    private static void createTmsTemplate(String chainFile){
+        chainFile += "Chain.csv";
         String templateFile = chainFile.replace("Chain", "");
         Template chain = new Template("tmsTemplates", chainFile);
         Template template = new Template("tmsTemplates", templateFile);
         LabelledCells lc = new LabelledCells(chain, template);
         RelMatrix rm = new RelMatrix(lc, chain);
         Weights weights = new Weights(rm.sortedLetters);
+        int[][] templateMatrix = new int[78][78];
         for (int i = 0; i < 78; i ++){
             for (int j = 0; j < 78; j ++){
                 char labelI = lc.cells[i % 6][Math.floorDiv(i, 6)];
@@ -48,7 +49,21 @@ public class TmsTemplate {
     }
 
     public static void main(String[] args){
-        TmsTemplate tms = new TmsTemplate("GtrFlatChain.csv");
+        String[] chainFiles = new String[]{
+                "Andromeda",
+                "deAlice",
+                "Diving",
+                "GtrFlat",
+                "GtrLShape",
+                "Landslide",
+                "Sandwich2-1-1",
+                "Stairs3-1",
+                "Turukame",
+                "Yayoi"
+        };
+        for (String chainStarter: chainFiles){
+            TmsTemplate.createTmsTemplate(chainStarter);
+        }
     }
 
 }

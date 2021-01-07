@@ -6,8 +6,7 @@ public interface PuyoI {
 
     Puyo copyPuyo(); // Doesn't need tests
 
-    static Puyo[] create2Puyo(int noOfColours){
-        Random x = new Random();
+    static Puyo[] create2Puyo(int noOfColours, Random x){
         int rand1 = x.nextInt(noOfColours);
         int rand2 = x.nextInt(noOfColours);
         Puyo p1 = new Puyo(Colour.values()[rand1]);
@@ -15,10 +14,10 @@ public interface PuyoI {
         return new Puyo[]{p1,p2};
     }
 
-    static Puyo[][] createInitialPuyo(int noOfColours){
-        Puyo[] p12 = create2Puyo(noOfColours);
-        Puyo[] p34 = create2Puyo(noOfColours);
-        Puyo[] p56 = create2Puyo(noOfColours);
+    static Puyo[][] createInitialPuyo(int noOfColours, Random x){
+        Puyo[] p12 = create2Puyo(noOfColours, x);
+        Puyo[] p34 = create2Puyo(noOfColours, x);
+        Puyo[] p56 = create2Puyo(noOfColours, x);
         return new Puyo[][] {p12, p34, p56};
     }
 

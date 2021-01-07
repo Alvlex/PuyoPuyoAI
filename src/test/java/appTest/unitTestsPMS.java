@@ -11,12 +11,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Random;
+
 public class unitTestsPMS {
 
     private Template PMS1 = new Template("PMS1.csv");
     private Template full = new Template("full.csv");
     private Template empty = new Template("empty.csv");
-    private Puyo[][] next3Pairs = {PuyoI.create2Puyo(1), PuyoI.create2Puyo(1), PuyoI.create2Puyo(1)};
+    private Random x = new Random(0);
+    private Puyo[][] next3Pairs = {PuyoI.create2Puyo(1, x), PuyoI.create2Puyo(1, x), PuyoI.create2Puyo(1, x)};
     private PMS PMS2;
     private PMS PMS3;
     private PMS PMS4;
@@ -78,12 +81,12 @@ public class unitTestsPMS {
     @Test
     public void generatePossFullCheck(){
         Board b = full.getBoard();
-        Assert.assertEquals(PMS3.generatePoss(new Node(b), PuyoI.create2Puyo(1)).size(), 0);
+        Assert.assertEquals(PMS3.generatePoss(new Node(b), PuyoI.create2Puyo(1, x)).size(), 0);
     }
 
     @Test
     public void generatePossEmptyCheck(){
         Board b = empty.getBoard();
-        Assert.assertEquals(PMS3.generatePoss(new Node(b), PuyoI.create2Puyo(1)).size(), 22);
+        Assert.assertEquals(PMS3.generatePoss(new Node(b), PuyoI.create2Puyo(1, x)).size(), 22);
     }
 }
