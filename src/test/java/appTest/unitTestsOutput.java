@@ -73,12 +73,12 @@ public class unitTestsOutput {
                 Move m = new Move(col, rot);
                 output.updateMoves(m, 0);
                 StringBuilder result = new StringBuilder();
-                int[][] coords = m.getCoord();
+                Coordinate[] coords = m.getCoord();
                 for (int i = 0; i < 2; i++) {
                     result.append(" ");
                     for (int j = 0; j < 6; j++) {
                         for (int k = 0; k < 2; k++) {
-                            if (coords[k][0] == j && coords[k][1] == i) {
+                            if (coords[k].getX() == j && coords[k].getY() == i) {
                                 result.append(" \033[").append(Colour.valueOf(puyo[0][k].getColour()).value).append("m⬤\033[0m");
                                 break;
                             }

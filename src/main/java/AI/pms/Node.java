@@ -12,6 +12,7 @@ public class Node {
     private List<Node> children;
     private Node parent;
     private int garbage;
+    private int chainLength;
     private int connections;
 
     public Node(){
@@ -28,6 +29,7 @@ public class Node {
         children = new ArrayList<>();
         Chain c = new Chain(this.b.copyBoard());
         c.runChain(this.b.findAllPuyo());
+        chainLength = c.chainLength();
         garbage = c.score();
         if (c.chainLength() == 0)
             garbage = -1;
@@ -68,6 +70,8 @@ public class Node {
     int getGarbage(){
         return garbage;
     }
+
+    int getChainLength(){ return chainLength; }
 
     Node getParent(){
         return parent;

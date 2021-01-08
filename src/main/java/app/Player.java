@@ -51,10 +51,10 @@ public class Player implements PlayerI{
 
     @Override
     public List<Coordinate> findRecentlyDropped(Move m){
-        int[][] coords = m.getCoord();
+        Coordinate[] coords = m.getCoord();
         ArrayList<Coordinate> result = new ArrayList<>();
-        result.add(new Coordinate(coords[0][0], board.peekCol(coords[0][0]) - coords[0][1]));
-        result.add(new Coordinate(coords[1][0], board.peekCol(coords[1][0]) - coords[1][1]));
+        result.add(new Coordinate(coords[0].getX(), board.peekCol(coords[0].getX()) - coords[0].getY()));
+        result.add(new Coordinate(coords[1].getX(), board.peekCol(coords[1].getX()) - coords[1].getY()));
         return result;
     }
 }

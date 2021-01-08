@@ -21,32 +21,32 @@ public class unitTestsMove {
     @Test
     public void leftTest(){
         for (int i = 5; i >= 0; i --){
-            Assert.assertEquals(rightEdge.getCoord()[0][0], i);
-            Assert.assertEquals(rightEdge.getCoord()[1][0], i);
+            Assert.assertEquals(rightEdge.getCoord()[0].getX(), i);
+            Assert.assertEquals(rightEdge.getCoord()[1].getX(), i);
             rightEdge.left();
         }
-        Assert.assertEquals(rightEdge.getCoord()[0][0], 0);
-        Assert.assertEquals(rightEdge.getCoord()[1][0], 0);
+        Assert.assertEquals(rightEdge.getCoord()[0].getX(), 0);
+        Assert.assertEquals(rightEdge.getCoord()[1].getX(), 0);
     }
 
     @Test
     public void rightTest(){
         for (int i = 0; i < 6; i ++){
-            Assert.assertEquals(leftEdge.getCoord()[0][0], i);
-            Assert.assertEquals(leftEdge.getCoord()[1][0], i);
+            Assert.assertEquals(leftEdge.getCoord()[0].getX(), i);
+            Assert.assertEquals(leftEdge.getCoord()[1].getX(), i);
             leftEdge.right();
         }
-        Assert.assertEquals(leftEdge.getCoord()[0][0], 5);
-        Assert.assertEquals(leftEdge.getCoord()[1][0], 5);
+        Assert.assertEquals(leftEdge.getCoord()[0].getX(), 5);
+        Assert.assertEquals(leftEdge.getCoord()[1].getX(), 5);
     }
 
     @Test
     public void rotClockTest(){
         for (int i = 0; i < 4; i ++){
-            Assert.assertEquals(move.getCoord()[0][0], 2);
-            Assert.assertEquals(move.getCoord()[0][1], i == 2 ? 1: 0);
-            Assert.assertEquals(move.getCoord()[1][0], i == 0 ? 2: i);
-            Assert.assertEquals(move.getCoord()[1][1], i == 0 ? 1: 0);
+            Assert.assertEquals(move.getCoord()[0].getX(), 2);
+            Assert.assertEquals(move.getCoord()[0].getY(), i == 2 ? 1: 0);
+            Assert.assertEquals(move.getCoord()[1].getX(), i == 0 ? 2: i);
+            Assert.assertEquals(move.getCoord()[1].getY(), i == 0 ? 1: 0);
             move.rotClock();
         }
     }
@@ -57,8 +57,10 @@ public class unitTestsMove {
         rightEdge.rotClock();
         for (int i = 0; i < 2; i ++){
             for (int j = 0; j < 2; j ++){
-                Assert.assertEquals(rightEdge.getCoord()[i][j], j == 1 ? 0 : i + 4);
-                Assert.assertEquals(leftEdge.getCoord()[i][j], j == 1 ? 0 : 1 - i);
+                Assert.assertEquals(rightEdge.getCoord()[i].getX(), i + 4);
+                Assert.assertEquals(rightEdge.getCoord()[i].getY(), 0);
+                Assert.assertEquals(leftEdge.getCoord()[i].getX(), 1 - i);
+                Assert.assertEquals(leftEdge.getCoord()[i].getY(), 0);
             }
         }
     }
@@ -66,10 +68,10 @@ public class unitTestsMove {
     @Test
     public void rotAntiTest(){
         for (int i = 0; i < 4; i ++){
-            Assert.assertEquals(move.getCoord()[0][0], 2);
-            Assert.assertEquals(move.getCoord()[0][1], i == 2 ? 1: 0);
-            Assert.assertEquals(move.getCoord()[1][0], i == 0 ? 2: 4 - i);
-            Assert.assertEquals(move.getCoord()[1][1], i == 0 ? 1: 0);
+            Assert.assertEquals(move.getCoord()[0].getX(), 2);
+            Assert.assertEquals(move.getCoord()[0].getY(), i == 2 ? 1: 0);
+            Assert.assertEquals(move.getCoord()[1].getX(), i == 0 ? 2: 4 - i);
+            Assert.assertEquals(move.getCoord()[1].getY(), i == 0 ? 1: 0);
             move.rotAnti();
         }
 
@@ -83,8 +85,10 @@ public class unitTestsMove {
         }
         for (int i = 0; i < 2; i ++){
             for (int j = 0; j < 2; j ++){
-                Assert.assertEquals(rightEdge.getCoord()[i][j], j == 1 ? 0 : i + 4);
-                Assert.assertEquals(leftEdge.getCoord()[i][j], j == 1 ? 0 : 1 - i);
+                Assert.assertEquals(rightEdge.getCoord()[i].getX(), i + 4);
+                Assert.assertEquals(leftEdge.getCoord()[i].getX(), 1 - i);
+                Assert.assertEquals(rightEdge.getCoord()[i].getY(), 0);
+                Assert.assertEquals(leftEdge.getCoord()[i].getY(), 0);
             }
         }
     }
@@ -99,8 +103,8 @@ public class unitTestsMove {
                 Move m = new Move(col, rot);
                 for (int i = 0; i < 2; i ++){
                     for (int j = 0; j < 2; j ++){
-                        Assert.assertEquals(m.getCoord()[i][j], j == 0 ? (i == 0 ? col : rot == 0 ? col : col - 2 + rot) :
-                                (i == 0 ? rot == 2 ? 1 : 0 : rot == 0 ? 1 : 0));
+                        Assert.assertEquals(m.getCoord()[i].getX(), i == 0 ? col : rot == 0 ? col : col - 2 + rot);
+                        Assert.assertEquals(m.getCoord()[i].getY(), i == 0 ? rot == 2 ? 1 : 0 : rot == 0 ? 1 : 0);
                     }
                 }
             }

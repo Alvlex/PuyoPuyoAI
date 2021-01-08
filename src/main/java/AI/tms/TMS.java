@@ -10,9 +10,9 @@ import java.util.List;
 
 public class TMS implements Strategy {
 
-    private List<Node> depth3 = new ArrayList<>();
+    private List<Node> nodes = new ArrayList<>();
     private ArrayList<Template> templates = new ArrayList<>();
-    private PMS pms = new PMS(3, 8, 120);
+    private PMS pms = new PMS(3, 8, 320);
     private boolean chainMade = false;
     private double averageTime;
     private int turn = 0;
@@ -32,37 +32,37 @@ public class TMS implements Strategy {
 
     @Override
     public Move makeMove(Board b, Puyo[][] currentPuyo) {
-        if (templates.size() == 0){
+        short[][] currentStateMatrix = generateStateMatrix(b);
+        for (int i = templates.size() - 1; i >= 0; i --){
+            if (getScore(currentStateMatrix, templates.get(i), b) == Double.NEGATIVE_INFINITY){
+                templates.remove(i);
+            }
+        }
+        if (templates.size() == 0 || chainMade){
+            System.out.println("Using PMS");
             return pms.makeMove(b, currentPuyo);
 //            Output o = new Output(new Board[]{b});
 //            throw new RuntimeException("No valid template to follow!\n" + o.printBoards());
         }
-        depth3.clear();
+        nodes.clear();
         turn ++;
         Date d = new Date();
-        if (chainMade)
-            return pms.makeMove(b, currentPuyo);
-        for (int i = templates.size() - 1; i >= 0; i --){
-            if (getScore(generateStateMatrix(b), templates.get(i)) == Double.NEGATIVE_INFINITY){
-                templates.remove(i);
-            }
-        }
         Node root = new Node(b, null);
         recursiveTree(root, 0, 2, currentPuyo);
         double highestScore = Double.NEGATIVE_INFINITY;
-        if (depth3.size() == 0){
+        if (nodes.size() == 0){
             Output o = new Output(new Board[]{b});
             o.updateCurrentPuyo(currentPuyo, 0);
             throw new RuntimeException("\n" + o.printCurrentPuyo() + "\n" + o.printBoards());
         }
-        Node selectedNode = depth3.get(0);
-        for (Node depth3Node: depth3){
-            short[][] matrix = generateStateMatrix(depth3Node.getBoard());
-            for (int i = 0; i < templates.size(); i ++){
-                double score = getScore(matrix, templates.get(i));
-                if (score >= highestScore){
-                    highestScore  = score;
-                    selectedNode = depth3Node;
+        Node selectedNode = nodes.get(0);
+        for (Node node: nodes){
+            short[][] matrix = generateStateMatrix(node.getBoard());
+            for (Template template : templates) {
+                double score = getScore(matrix, template, node.getBoard());
+                if (score >= highestScore) {
+                    highestScore = score;
+                    selectedNode = node;
                 }
             }
         }
@@ -82,7 +82,7 @@ public class TMS implements Strategy {
             return templates.get(0).name;
         }
         else {
-            return templates.size() + "";
+            return "Nothing Completed";
         }
     }
 
@@ -164,21 +164,22 @@ public class TMS implements Strategy {
                     totalLeafNodes += recursiveTree(child, depth + 1, maxDepth, currentPuyo);
                 }
                 root.addChildren(children);
+                nodes.addAll(children);
                 return totalLeafNodes;
             } else if (depth == maxDepth) {
                 List<Node> children = generatePoss(root, currentPuyo[depth]);
                 root.addChildren(children);
-                depth3.addAll(children);
+                nodes.addAll(children);
                 return children.size();
             }
         }
         return 0;
     }
 
-    private double getScore(short[][] stateMatrix, Template template){
+    private double getScore(short[][] stateMatrix, Template template, Board b){
         double numerator = 0;
         for (int i = 0; i < 78; i ++){
-            if (stateMatrix[i][0] != 0){
+            if (b.getPuyo(i % 6, Math.floorDiv(i, 6)) != null){
                 for (int j = 0; j < 78; j ++){
                     int temp = stateMatrix[i][j] * template.getEntry(i, j);
                     if (temp < 0){

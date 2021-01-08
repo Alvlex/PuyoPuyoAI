@@ -55,26 +55,28 @@ public class Move implements MoveI{
             col --;
     }
 
-    public int[][] getCoord(){
-        int[][] coords = new int[2][2];
-        coords[0][0] = col;
+    public Coordinate[] getCoord(){
+        Coordinate coord1 = null;
+        Coordinate coord2 = null;
         switch(rot){
             case 0:
-                coords[1][0] = col;
-                coords[1][1] = 1;
+                coord1 = new Coordinate(col, 0);
+                coord2 = new Coordinate(col, 1);
                 break;
             case 1:
-                coords[1][0] = col - 1;
+                coord1 = new Coordinate(col, 0);
+                coord2 = new Coordinate(col - 1, 0);
                 break;
             case 2:
-                coords[1][0] = col;
-                coords[1][1] = 0;
-                coords[0][1] = 1;
+                coord1 = new Coordinate(col, 1);
+                coord2 = new Coordinate(col, 0);
                 break;
             case 3:
-                coords[1][0] = col + 1;
+                coord1 = new Coordinate(col, 0);
+                coord2 = new Coordinate(col + 1, 0);
                 break;
         }
-        return coords;
+
+        return new Coordinate[]{coord1, coord2};
     }
 }

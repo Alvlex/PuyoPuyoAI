@@ -48,16 +48,16 @@ public class Board implements BoardI{
         // If the second one drops into a full column, then
         // remove the first one and then return false
         int dropped = -1; // This records the index of the first dropped Puyo
-        int[][] coords = m.getCoord();
+        Coordinate[] coords = m.getCoord();
         for (int i = 1; i >= 0; i --){
             for (int j = 0; j < 2; j ++){
-                if (coords[j][1] == i){
-                    if (dropPuyoHelper(puyos[j], coords[j][0])){
+                if (coords[j].getY() == i){
+                    if (dropPuyoHelper(puyos[j], coords[j].getX())){
                         dropped = j;
                         continue;
                     }
                     else if (dropped != -1){
-                        removePuyo(coords[j][0]);
+                        removePuyo(coords[j].getX());
                     }
                     return false;
                 }

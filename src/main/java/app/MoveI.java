@@ -5,5 +5,5 @@ public interface MoveI {
     void right();
     void rotClock();
     void rotAnti();
-    int[][] getCoord();
+    Coordinate[] getCoord();
 }

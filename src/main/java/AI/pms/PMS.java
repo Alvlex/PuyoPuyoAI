@@ -17,13 +17,22 @@ public class PMS implements Strategy {
     private int turn = 0;
     private int spaceLeftHeuristic;
     private int garbageSatisfy;
+    private int chainLengthSatisfy;
     private int depth;
 
+    public PMS(int depth, int spaceLeft, int garbageSatisfy, int chainLengthSatisfy){
+        this.depth = depth;
+        prepare();
+        spaceLeftHeuristic = spaceLeft;
+        this.garbageSatisfy = garbageSatisfy;
+        this.chainLengthSatisfy = chainLengthSatisfy;
+    }
     public PMS(int depth, int spaceLeft, int garbageSatisfy){
         this.depth = depth;
         prepare();
         spaceLeftHeuristic = spaceLeft;
         this.garbageSatisfy = garbageSatisfy;
+        this.chainLengthSatisfy = Integer.MAX_VALUE;
     }
 
     private void prepare(){
@@ -87,6 +96,7 @@ public class PMS implements Strategy {
         result.add(oppChainLength == 1);
         result.add(emptySpaceLeft <= spaceLeftHeuristic);
         result.add(mGLayers[0].getGarbage() >= garbageSatisfy);
+        result.add(mGLayers[0].getChainLength() >= chainLengthSatisfy);
         return result;
     }
 

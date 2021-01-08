@@ -11,7 +11,7 @@ public class TestingStrategy implements Strategy {
         Move m2 = new Move(1, 1);
         boolean mFine = true;
         while(!b.dropPuyo(currentPuyo[0], m)){
-            if (m.getCoord()[0][0] == 5){
+            if (m.getCoord()[0].getX() == 5){
                 mFine = false;
                 break;
             }
@@ -20,7 +20,7 @@ public class TestingStrategy implements Strategy {
         if (mFine)
             return m;
         while(!b.dropPuyo(currentPuyo[0], m2)){
-            if (m2.getCoord()[0][0] == 5){
+            if (m2.getCoord()[0].getX() == 5){
                 return null;
             }
             m2.right();

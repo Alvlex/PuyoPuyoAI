@@ -10,7 +10,7 @@ public class TmsTemplate {
 
 
     private static void createTmsTemplate(String chainFile){
-        chainFile += "Chain.csv";
+        chainFile += "/" + chainFile + "Chain.csv";
         String templateFile = chainFile.replace("Chain", "");
         Template chain = new Template("tmsTemplates", chainFile);
         Template template = new Template("tmsTemplates", templateFile);

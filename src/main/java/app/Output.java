@@ -47,12 +47,12 @@ public class Output implements OutputI{
         StringBuilder output = new StringBuilder();
         for (int i = 0; i < 2; i ++){
             for (int boardNo = 0; boardNo < boards.length; boardNo ++) {
-                int[][] coords = moves[boardNo].getCoord();
+                Coordinate[] coords = moves[boardNo].getCoord();
                 output.append(" ");
                 for (int j = 0; j < 6; j++) {
                     boolean contentAdded = false;
                     for (int k = 0; k < 2; k++) {
-                        if (coords[k][0] == j && coords[k][1] == i) {
+                        if (coords[k].getX() == j && coords[k].getY() == i) {
                             output.append(printPuyo(currentPuyo[boardNo][0][k]));
                             contentAdded = true;
                             break;

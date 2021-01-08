@@ -1,0 +1,12 @@
+My template making doesn't produce the perfect templates. It disallows more combinations than needed.
+For example., with the Andromeda chain, my template requires (5,0) and (2,2) to be different, but the
+supplied chain to get the template has both of those as the same colour. This is because my method
+find groups of puyo that pop together and labels them with unique capital letters. The group of yellows
+at the beginning actually split up and pop in separate groups, so they consist of different capital letters
+and my relationship matrix makes capital letters that are adjacent at any point in the chain different colours
+to each other (in case that they accidentally pop) and this is probably too cautious. This means that those 2 coordinates
+have to be different colours even though they don't have to be.
+
+I made TMS look for the node that has the highest accordance score, rather than just the depth-3 nodes.
+This will result in a more greedy algorithm that looks for more early payoffs. It may not be a good change, however
+it ensures that the chain gets finished if it is nearing the finish. And then switches to PMS.
