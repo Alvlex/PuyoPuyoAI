@@ -1,8 +1,9 @@
-package appTest;
+package aiTest;
 
 import AI.Strategy;
 import AI.tms.TMS;
 import app.*;
+import appTest.Template;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class testsTMS {
         Game g;
         HashMap<String, Integer> chainsUsed = new HashMap<>();
         int[] chainLengths = new int[20];
-        int noOfGames = 100;
+        int noOfGames = 1;
         double totalTime = 0;
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
@@ -65,7 +66,7 @@ public class testsTMS {
         for (String chain: chainsUsed.keySet()){
             System.out.println(chain + ": " + chainsUsed.get(chain));
         }
-        System.out.println("Average Time: " + totalTime / 20);
+        System.out.println("Average Time: " + totalTime / noOfGames);
     }
 
     @Test

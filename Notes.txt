@@ -10,3 +10,53 @@ have to be different colours even though they don't have to be.
 I made TMS look for the node that has the highest accordance score, rather than just the depth-3 nodes.
 This will result in a more greedy algorithm that looks for more early payoffs. It may not be a good change, however
 it ensures that the chain gets finished if it is nearing the finish. And then switches to PMS.
+
+100 Runs:
+0:	2
+1:	41
+2:	13
+3:	5
+4:	1
+5:	2
+6:	2
+7:	0
+8:	2
+9:	7
+10:	15
+11:	5
+12:	4
+13:	1
+14:	0
+15:	0
+16:	0
+17:	0
+18:	0
+19:	0
+Average chain: 4.53
+Stairs3-1: 1
+Andromeda: 1
+Turukame: 23
+Nothing Completed: 57
+GtrLShape: 7
+Landslide: 1
+GtrFlat: 1
+Sandwich2-1-1: 9
+Average Time: 425.753136
+
+Best PMS Heuristics out of 10 games with the 10 random seeds:
+Highest Chain: 9
+Highest Chain: 10
+Highest Chain: 9
+Highest Chain: 7
+Highest Chain: 5
+Highest Chain: 8
+Highest Chain: 8
+Highest Chain: 5
+Highest Chain: 4
+Highest Chain: 7
+Highest Count: 8
+8, 270
+8, 280
+8, 290
+8, 300
+8, 310

@@ -83,11 +83,11 @@ public class Template {
         throw new Exception("Invalid Character " + c);
     }
 
-    Board getBoard(){
+    public Board getBoard(){
         return b.copyBoard();
     }
 
-    boolean equalBoards(Board b2){
+    public boolean equalBoards(Board b2){
         for (int i = 0; i < 6; i ++){
             for (int j = 0; j < 13; j ++){
                 if (b.getPuyo(i,j) == null || b2.getPuyo(i,j) == null){
