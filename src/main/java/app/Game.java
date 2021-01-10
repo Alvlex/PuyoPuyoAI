@@ -33,13 +33,16 @@ public class Game {
         output = new Output(b);
         for (int i = 0; i < players.length; i ++) {
             players[i] = new Player(b[i], 4, strategies[i], randomSeeds[i]);
+            if (strategies[i] instanceof HumanStrategy){
+                ((HumanStrategy) strategies[i]).updateOutput(output);
+            }
         }
     }
 
     private int playSinglePlayer(int noOfTurns){
         int max = 0;
         boolean popping = players[0].chain.isPopping(recentlyDropped[0]);
-        while((players[0].board.checkPossibilities() || popping) && turn < noOfTurns && max == 0) {
+        while((players[0].board.checkPossibilities() || popping) && turn < noOfTurns && max < 8) {
             updateTurn();
             if (popping && false) {
                 System.out.println(output.printBoards());

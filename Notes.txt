@@ -44,6 +44,7 @@ Sandwich2-1-1: 9
 Average Time: 425.753136
 
 Best PMS Heuristics out of 10 games with the 10 random seeds:
+For Depth2
 Highest Chain: 9
 Highest Chain: 10
 Highest Chain: 9
@@ -60,3 +61,22 @@ Highest Count: 8
 8, 290
 8, 300
 8, 310
+
+For Depth3
+Highest Chain: 7
+Highest Chain: 4
+Highest Chain: 10
+Highest Chain: 7
+Highest Chain: 7
+Highest Chain: 7
+Highest Chain: 7
+Highest Chain: 7
+Highest Chain: 8
+Highest Chain: 9
+Highest Count: 8
+0, 210
+0, 220
+4, 210
+4, 220
+8, 210
+8, 220

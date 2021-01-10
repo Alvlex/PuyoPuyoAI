@@ -12,7 +12,7 @@ public class TMS implements Strategy {
 
     private List<Node> nodes = new ArrayList<>();
     private ArrayList<Template> templates = new ArrayList<>();
-    private PMS pms = new PMS(3, 8, 320);
+    private PMS pms = new PMS(4, 8, 0, 8);
     private boolean chainMade = false;
     private double averageTime;
     private int turn = 0;

@@ -29,21 +29,21 @@ public class unitTestsPMS {
 
     @Before
     public void prepare(){
-        PMS2 = new PMS(2, 32, 120);
-        PMS3 = new PMS(3, 24, 270);
+        PMS2 = new PMS(2, 8, 300);
+        PMS3 = new PMS(3, 4, 220);
         PMS4 = new PMS(4, 16, 400);
     }
 
     @Test
     public void testHeuristics(){
-        int depth = 2;
+        int depth = 3;
         HashMap<Integer, HashMap<Integer, Integer>> bestHeuristics = new HashMap<>();
         for (int randomSeed = 0; randomSeed < 10; randomSeed ++) {
             ArrayList<Integer> bestSpaceLeft = new ArrayList<>();
             ArrayList<Integer> bestGarbageSatisfy = new ArrayList<>();
             int highestChain = 0;
             for (int spaceLeft = 0; spaceLeft <= 32; spaceLeft += 4) {
-                for (int garbageSatisfy = 0; garbageSatisfy <= 400; garbageSatisfy += 10) {
+                for (int garbageSatisfy = 100; garbageSatisfy <= 400; garbageSatisfy += 10) {
                     PMS pms = new PMS(depth, spaceLeft, garbageSatisfy);
                     Game g = new Game(new Strategy[]{pms}, randomSeed);
                     int tempChain = g.play(Integer.MAX_VALUE);
@@ -111,7 +111,7 @@ public class unitTestsPMS {
         int noOfGames = 100;
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
-            g = new Game(new Strategy[]{PMS2});
+            g = new Game(new Strategy[]{PMS2}, i);
             chainLengths[g.play(Integer.MAX_VALUE)] ++;
         }
         int avgChains = 0;
