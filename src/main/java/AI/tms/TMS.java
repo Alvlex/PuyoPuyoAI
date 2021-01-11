@@ -12,7 +12,7 @@ public class TMS implements Strategy {
 
     private List<Node> nodes = new ArrayList<>();
     private ArrayList<Template> templates = new ArrayList<>();
-    private PMS pms = new PMS(4, 8, 0, 8);
+    private PMS pms = new PMS(3, 32, Integer.MAX_VALUE, 8);
     private boolean chainMade = false;
     private double averageTime;
     private int turn = 0;
@@ -33,13 +33,16 @@ public class TMS implements Strategy {
     @Override
     public Move makeMove(Board b, Puyo[][] currentPuyo) {
         short[][] currentStateMatrix = generateStateMatrix(b);
-        for (int i = templates.size() - 1; i >= 0; i --){
-            if (getScore(currentStateMatrix, templates.get(i), b) == Double.NEGATIVE_INFINITY){
-                templates.remove(i);
+        for (Template t: templates) {
+            if (getScore(currentStateMatrix, t, b) >= 0.99 && !chainMade) {
+                chainMade = true;
+                System.out.println("CHAIN MADE!");
+                Output o = new Output(new Board[]{b});
+                System.out.println(o.printBoards());
             }
         }
-        if (templates.size() == 0 || chainMade){
-            System.out.println("Using PMS");
+        if (chainMade){
+//            System.out.println("Using PMS");
             return pms.makeMove(b, currentPuyo);
 //            Output o = new Output(new Board[]{b});
 //            throw new RuntimeException("No valid template to follow!\n" + o.printBoards());
@@ -47,7 +50,7 @@ public class TMS implements Strategy {
         nodes.clear();
         turn ++;
         Date d = new Date();
-        Node root = new Node(b, null);
+        Node root = new Node(b, null, null);
         recursiveTree(root, 0, 2, currentPuyo);
         double highestScore = Double.NEGATIVE_INFINITY;
         if (nodes.size() == 0){
@@ -60,14 +63,15 @@ public class TMS implements Strategy {
             short[][] matrix = generateStateMatrix(node.getBoard());
             for (Template template : templates) {
                 double score = getScore(matrix, template, node.getBoard());
-                if (score >= highestScore) {
+                if (score > highestScore) {
                     highestScore = score;
+                    selectedNode = node;
+                }
+                else if (score == highestScore && node.getBoard().findAllPuyo().size() < selectedNode.getBoard().findAllPuyo().size()){
                     selectedNode = node;
                 }
             }
         }
-        if (highestScore >= 0.99)
-            chainMade = true;
         Move m = findNextMove(root, selectedNode, currentPuyo);
         b.dropPuyo(currentPuyo[0], m);
         averageTime = (1 - 1.0 / turn) * averageTime + (1.0 / turn) * (new Date().getTime() - d.getTime());
@@ -96,22 +100,7 @@ public class TMS implements Strategy {
                 throw new RuntimeException("Parent is null\n" + o.printCurrentPuyo() + "\n" + o.printBoards());
             }
         }
-        return findDiff(root, temp, currentPuyo[0]);
-    }
-
-    private Move findDiff(Node first, Node second, Puyo[] puyo){
-        for (int col = 0; col < 6; col ++){
-            for (int rot = 0; rot < 4; rot ++){
-                Move m = new Move(col, rot);
-                Board b1 = first.getBoard().copyBoard();
-                b1.dropPuyo(puyo, m);
-                if (b1.equalBoards(second.getBoard())){
-                    return m;
-                }
-            }
-        }
-        Output o = new Output(new Board[]{first.getBoard(), second.getBoard()});
-        throw new RuntimeException(o.printBoards() + "\n" + puyo[0].getColour() + " " + puyo[1].getColour());
+        return temp.getMove();
     }
 
     private short[][] generateStateMatrix(Board b){
@@ -142,13 +131,13 @@ public class TMS implements Strategy {
                 Board temp = parent.getBoard().copyBoard();
                 Move m = new Move(col, i * 2);
                 if (temp.dropPuyo(puyoPair, m))
-                    resultStates.add(new Node(temp, parent));
+                    resultStates.add(new Node(temp, parent, m));
             }
             for (int row = 0; row < 5; row ++){
                 Move m = new Move(row, i * 2 + 1);
                 Board temp = parent.getBoard().copyBoard();
                 if (temp.dropPuyo(puyoPair, m))
-                    resultStates.add(new Node(temp, parent));
+                    resultStates.add(new Node(temp, parent, m));
             }
         }
         return resultStates;
@@ -156,22 +145,20 @@ public class TMS implements Strategy {
 
 
     private int recursiveTree(Node root, int depth, int maxDepth, Puyo[][] currentPuyo){
-        if (!new Chain(root.getBoard()).isPopping()) {
-            if (depth < maxDepth) {
-                List<Node> children = generatePoss(root, currentPuyo[depth]);
-                int totalLeafNodes = 0;
-                for (Node child : children) {
-                    totalLeafNodes += recursiveTree(child, depth + 1, maxDepth, currentPuyo);
-                }
-                root.addChildren(children);
-                nodes.addAll(children);
-                return totalLeafNodes;
-            } else if (depth == maxDepth) {
-                List<Node> children = generatePoss(root, currentPuyo[depth]);
-                root.addChildren(children);
-                nodes.addAll(children);
-                return children.size();
+        if (depth < maxDepth) {
+            List<Node> children = generatePoss(root, currentPuyo[depth]);
+            int totalLeafNodes = 0;
+            for (Node child : children) {
+                totalLeafNodes += recursiveTree(child, depth + 1, maxDepth, currentPuyo);
             }
+            root.addChildren(children);
+            nodes.addAll(children);
+            return totalLeafNodes;
+        } else if (depth == maxDepth) {
+            List<Node> children = generatePoss(root, currentPuyo[depth]);
+            root.addChildren(children);
+            nodes.addAll(children);
+            return children.size();
         }
         return 0;
     }

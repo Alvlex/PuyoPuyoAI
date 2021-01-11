@@ -54,7 +54,7 @@ public class Game {
             }
         }
         updateTurn();
-        if (false) {
+        if (true) {
             System.out.println(output.printBoards());
             System.out.println("GAME OVER");
         }

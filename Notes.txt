@@ -11,6 +11,21 @@ I made TMS look for the node that has the highest accordance score, rather than 
 This will result in a more greedy algorithm that looks for more early payoffs. It may not be a good change, however
 it ensures that the chain gets finished if it is nearing the finish. And then switches to PMS.
 
+So, currently the TMS holds a tree very similar to PMS depth-3, where if a node causes a chain, then it doesn't have children.
+However, this sometimes doesn't allow my templates to even be finished. I think it may be better to allow chains to exist in the
+tree and then also have children to the resulting board state. Or maybe have the board state for the chaining board to be the
+actual resulting board state (however, there will be the problem of finding the move that resulted in that board state).
+This will allow TMS to get rid of puyo that it doesn't need in small chains to then reach the finished template.
+Another thing to consider is adding a small incentive to not fill up the board unnecessarily. So a heuristic could be used
+to decrease the quality of an accordance score by how much the board is filled up (like a secondary score that it takes
+into consideration).
+
+I've noticed that PMS may not be the best thing after TMS. After TMS, the board may be extremely messy and the trigger to the chain
+may be buried under puyo and so PMS may not even know there is a chain there and may just fill up the board instead. To alleviate this,
+I have two ideas: I could custom make an algorithm that searches for the TMS chain trigger and unburies it to set it off, or
+I could add incentive in the template to leave the trigger unburied and open to then allow PMS to see it and build off it. I will
+try the second approach.
+
 100 Runs:
 0:	2
 1:	41
