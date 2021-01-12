@@ -16,6 +16,7 @@ public class TMS implements Strategy {
     private boolean chainMade = false;
     private double averageTime;
     private int turn = 0;
+    private String templateMade = "Nothing Completed";
 
     public TMS(){
         templates.add(new Template("Andromeda.csv"));
@@ -37,6 +38,7 @@ public class TMS implements Strategy {
             if (getScore(currentStateMatrix, t, b) >= 0.99 && !chainMade) {
                 chainMade = true;
                 System.out.println("CHAIN MADE!");
+                templateMade = t.name;
                 Output o = new Output(new Board[]{b});
                 System.out.println(o.printBoards());
             }
@@ -52,42 +54,62 @@ public class TMS implements Strategy {
         Date d = new Date();
         Node root = new Node(b, null, null);
         recursiveTree(root, 0, 2, currentPuyo);
-        double highestScore = Double.NEGATIVE_INFINITY;
         if (nodes.size() == 0){
             Output o = new Output(new Board[]{b});
             o.updateCurrentPuyo(currentPuyo, 0);
             throw new RuntimeException("\n" + o.printCurrentPuyo() + "\n" + o.printBoards());
         }
-        Node selectedNode = nodes.get(0);
-        for (Node node: nodes){
-            short[][] matrix = generateStateMatrix(node.getBoard());
-            for (Template template : templates) {
-                double score = getScore(matrix, template, node.getBoard());
-                if (score > highestScore) {
-                    highestScore = score;
-                    selectedNode = node;
-                }
-                else if (score == highestScore && node.getBoard().findAllPuyo().size() < selectedNode.getBoard().findAllPuyo().size()){
-                    selectedNode = node;
-                }
-            }
-        }
+
+        Node selectedNode = selectNode(b);
+
         Move m = findNextMove(root, selectedNode, currentPuyo);
         b.dropPuyo(currentPuyo[0], m);
         averageTime = (1 - 1.0 / turn) * averageTime + (1.0 / turn) * (new Date().getTime() - d.getTime());
         return m;
     }
 
+    private Node selectNode(Board currentBoard){
+        double highestScore = Double.NEGATIVE_INFINITY;
+        Node selectedNode = null;
+        double highestScoreBlocked = Double.NEGATIVE_INFINITY;
+        Node selectedNodeBlocked = null;
+        for (Node node: nodes){
+            short[][] matrix = generateStateMatrix(node.getBoard());
+            for (Template template : templates) {
+                if(template.getNoBlocked(node.getBoard()) == template.getNoBlocked(currentBoard)) {
+                    double score = getScore(matrix, template, node.getBoard());
+                    if (score > highestScore) {
+                        highestScore = score;
+                        selectedNode = node;
+                    } else if (score == highestScore && highestScore != Double.NEGATIVE_INFINITY && node.getBoard().findAllPuyo().size() < selectedNode.getBoard().findAllPuyo().size()) {
+                        selectedNode = node;
+                    }
+                }
+                else{
+                    double score = getScore(matrix, template, node.getBoard());
+                    if (score > highestScoreBlocked) {
+                        highestScoreBlocked = score;
+                        selectedNodeBlocked = node;
+                    } else if (score == highestScoreBlocked && highestScoreBlocked != Double.NEGATIVE_INFINITY && node.getBoard().findAllPuyo().size() < selectedNodeBlocked.getBoard().findAllPuyo().size()) {
+                        selectedNodeBlocked = node;
+                    }
+                }
+            }
+        }
+        if (selectedNode == null){
+            if (selectedNodeBlocked == null){
+                return nodes.get(0);
+            }
+            return selectedNodeBlocked;
+        }
+        return selectedNode;
+    }
+
     public double getAverageTime(){
         return averageTime;
     }
     public String getTemplate(){
-        if (templates.size() == 1){
-            return templates.get(0).name;
-        }
-        else {
-            return "Nothing Completed";
-        }
+        return templateMade;
     }
 
     private Move findNextMove(Node root, Node target, Puyo[][] currentPuyo){

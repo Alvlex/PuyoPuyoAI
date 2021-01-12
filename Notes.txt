@@ -26,6 +26,11 @@ I have two ideas: I could custom make an algorithm that searches for the TMS cha
 I could add incentive in the template to leave the trigger unburied and open to then allow PMS to see it and build off it. I will
 try the second approach.
 
+I've added another csv file for each template where it shows the start of the chain, or the coordinates where the chain
+could be set off. By specifying the coordinates, I can then check if any move blocks these spaces before the
+chain is finished. I want the algorithm to avoid these spaces as much as possible. I still need to think about how
+this should be done.
+
 100 Runs:
 0:	2
 1:	41
