@@ -45,10 +45,6 @@ public class PMS implements Strategy {
     }
 
     @Override
-    public Move makeMove(Board b, Puyo[][] currentPuyo) {
-        return makeMove(b, currentPuyo, new Board());
-    }
-
     public Move makeMove(Board our, Puyo[][] currentPuyo, Board opponent){
         turn ++;
         Date d = new Date();
@@ -198,10 +194,7 @@ public class PMS implements Strategy {
             if (maxConnectionsNodeLayers[i].getConnections() >= mostConnections.getConnections())
                 mostConnections = maxConnectionsNodeLayers[i];
         }
-        if (mostConnections.getConnections() > 0)
-            return mostConnections;
-        else
-            throw new RuntimeException("Root is the best node in the tree");
+        return mostConnections;
     }
 
     private List<Node> generateDepth4Layer(Node parent, int colours){

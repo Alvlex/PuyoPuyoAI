@@ -11,9 +11,9 @@ import java.util.Random;
 
 public class Player implements PlayerI{
     public Puyo[][] currentPuyo;
-    Board board;
-    Chain chain;
-    Garbage garbage;
+    public Board board;
+    public Chain chain;
+    public Garbage garbage;
     private int noOfColours;
     public Strategy s;
     private Random x;
@@ -41,10 +41,7 @@ public class Player implements PlayerI{
     @Override
     public Move turn(Board oppBoard){
         Move move;
-        if (s instanceof PMS)
-            move = ((PMS) s).makeMove(board, currentPuyo, oppBoard);
-        else
-            move = s.makeMove(board, currentPuyo);
+        move = s.makeMove(board, currentPuyo, oppBoard);
         getNextPuyo();
         return move;
     }

@@ -6,7 +6,7 @@ import app.Puyo;
 
 public class TestingStrategy implements Strategy {
     @Override
-    public Move makeMove(Board b, Puyo[][] currentPuyo) {
+    public Move makeMove(Board b, Puyo[][] currentPuyo, Board oppBoard) {
         Move m = new Move(0,0);
         Move m2 = new Move(1, 1);
         boolean mFine = true;

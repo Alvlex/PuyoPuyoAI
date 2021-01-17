@@ -24,7 +24,7 @@ public class HumanStrategy implements Strategy{
         this.output = output;
     }
     @Override
-    public Move makeMove(Board b, Puyo[][] currentPuyo) {
+    public Move makeMove(Board b, Puyo[][] currentPuyo, Board oppBoard) {
         System.out.println("Player " + (playerNo + 1) + "'s turn!" );
         Move move = new Move();
         Scanner x = new Scanner(System.in);

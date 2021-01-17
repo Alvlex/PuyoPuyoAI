@@ -77,13 +77,13 @@ public class Game {
         return popping;
     }
 
-    private void playMultiPlayer(int noOfTurns){
+    private int playMultiPlayer(int noOfTurns){
         boolean[] popping = new boolean[2];
         popping[0] = players[0].chain.isPopping(recentlyDropped[0]);
         popping[1] = players[1].chain.isPopping(recentlyDropped[1]);
         while(players[0].board.checkPossibilities() && players[1].board.checkPossibilities() && turn < noOfTurns) {
             updateTurn();
-            if (popping[0] && popping[1]) {
+            if (popping[0] && popping[1] && false) {
                 System.out.println(output.printBoards());
             }
             int[] scores = new int[2];
@@ -104,6 +104,12 @@ public class Game {
         updateTurn();
         System.out.println(output.printBoards());
         System.out.println("GAME OVER");
+        if (!players[0].board.checkPossibilities())
+            return 1;
+        else if (!players[1].board.checkPossibilities())
+            return 0;
+        else
+            return -1;
     }
 
     private void updateTurn(){
@@ -115,12 +121,12 @@ public class Game {
         turn ++;
     }
 
-    private void play(){
+    public int play(){
         if (players.length == 1){
-            playSinglePlayer(Integer.MAX_VALUE);
+            return playSinglePlayer(Integer.MAX_VALUE);
         }
         else{
-            playMultiPlayer(Integer.MAX_VALUE);
+            return playMultiPlayer(Integer.MAX_VALUE);
         }
     }
 
@@ -135,7 +141,7 @@ public class Game {
 
     public static void main(String[] args){
 //        Game g = new Game(new Strategy[]{new PMS(3, 16, 320)});
-        Game g = new Game(new Strategy[]{new TMS()});
-        g.play();
+        Game g = new Game(new Strategy[]{new PMS(2,8,300), new PMS(3, 8, 220)});
+        System.out.println(g.play());
     }
 }

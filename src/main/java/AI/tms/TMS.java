@@ -12,12 +12,13 @@ public class TMS implements Strategy {
 
     private List<Node> nodes = new ArrayList<>();
     private ArrayList<Template> templates = new ArrayList<>();
-    private PMS pms = new PMS(4, 8, 0, 8);
+    private PMS pms;
     private boolean chainMade = false;
     private double averageTime;
     private int turn = 0;
 
-    public TMS(){
+    public TMS(PMS pms){
+        this.pms = pms;
         templates.add(new Template("Andromeda.csv"));
         templates.add(new Template("deAlice.csv"));
         templates.add(new Template("Diving.csv"));
@@ -31,7 +32,7 @@ public class TMS implements Strategy {
     }
 
     @Override
-    public Move makeMove(Board b, Puyo[][] currentPuyo) {
+    public Move makeMove(Board b, Puyo[][] currentPuyo, Board oppBoard) {
         short[][] currentStateMatrix = generateStateMatrix(b);
         for (int i = templates.size() - 1; i >= 0; i --){
             if (getScore(currentStateMatrix, templates.get(i), b) == Double.NEGATIVE_INFINITY){
@@ -39,8 +40,7 @@ public class TMS implements Strategy {
             }
         }
         if (templates.size() == 0 || chainMade){
-            System.out.println("Using PMS");
-            return pms.makeMove(b, currentPuyo);
+            return pms.makeMove(b, currentPuyo, oppBoard);
 //            Output o = new Output(new Board[]{b});
 //            throw new RuntimeException("No valid template to follow!\n" + o.printBoards());
         }

@@ -100,7 +100,7 @@ public class unitTestsPMS {
     @Test
     public void moveCheck(){
         Board b = PMS1.getBoard();
-        PMS3.makeMove(b, next3Pairs);
+        PMS3.makeMove(b, next3Pairs, new Board());
         Assert.assertEquals(b.getPuyo(4,0).getColour(), "RED");
     }
 
@@ -126,7 +126,7 @@ public class unitTestsPMS {
 
     private void getMoveMetrics(PMS pms, Board b, int depth){
         System.out.println("Depth " + depth + " PMS");
-        pms.makeMove(b, next3Pairs);
+        pms.makeMove(b, next3Pairs, new Board());
         pms.printStats();
     }
 

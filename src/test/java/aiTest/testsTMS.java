@@ -1,6 +1,7 @@
 package aiTest;
 
 import AI.Strategy;
+import AI.pms.PMS;
 import AI.tms.TMS;
 import app.*;
 import appTest.Template;
@@ -16,9 +17,11 @@ public class testsTMS {
     Template pms1 = new Template("PMS1.csv");
     Template tms1 = new Template("TMS1.csv");
     Puyo[][] currentPuyo = new Puyo[3][2];
+    PMS pms;
 
     @Before
     public void prepare(){
+        pms = new PMS(3,8,220);
         for (int i = 0; i < 3; i ++)
             for (int j = 0; j < 2; j ++)
                 currentPuyo[i][j] = new Puyo(Colour.YELLOW);
@@ -26,9 +29,9 @@ public class testsTMS {
 
     @Test
     public void checkCompleteTemplate(){
-        TMS tms = new TMS();
+        TMS tms = new TMS(pms);
         currentPuyo[0][0] = new Puyo(Colour.BLUE);
-        Move m = tms.makeMove(tms1.getBoard(), currentPuyo);
+        Move m = tms.makeMove(tms1.getBoard(), currentPuyo, new Board());
         System.out.println(tms.getTemplate());
         for (int i = 0; i < 2; i ++){
             Assert.assertTrue(sameCoord(m.getCoord()[i], new Coordinate(5, 1 - i)));
@@ -50,7 +53,7 @@ public class testsTMS {
         double totalTime = 0;
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
-            TMS tms = new TMS();
+            TMS tms = new TMS(pms);
             g = new Game(new Strategy[]{tms}, i);
             chainLengths[g.play(Integer.MAX_VALUE)] ++;
             chainsUsed.put(tms.getTemplate(), chainsUsed.getOrDefault(tms.getTemplate(), 0) + 1);
@@ -71,8 +74,8 @@ public class testsTMS {
 
     @Test
     public void getTimings(){
-        TMS tms = new TMS();
-        tms.makeMove(pms1.getBoard(), PuyoI.createInitialPuyo(4, new Random(0)));
+        TMS tms = new TMS(pms);
+        tms.makeMove(pms1.getBoard(), PuyoI.createInitialPuyo(4, new Random(0)), new Board());
 
     }
 
