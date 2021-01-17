@@ -1,6 +1,8 @@
 package AI.tms;
 
 import app.Board;
+import app.Chain;
+import app.Move;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +11,11 @@ public class Node {
     private Board b;
     private List<Node> children;
     private Node parent;
+    private Move m;
 
-    public Node(Board b, Node parent){
+    public Node(Board b, Node parent, Move m){
+        this.m = m;
+        new Chain(b).runChain(b.findAllPuyo());
         this.b = b;
         this.parent = parent;
         children = new ArrayList<>();
@@ -29,6 +34,10 @@ public class Node {
 
     Board getBoard(){
         return b;
+    }
+
+    Move getMove(){
+        return m;
     }
 
 }

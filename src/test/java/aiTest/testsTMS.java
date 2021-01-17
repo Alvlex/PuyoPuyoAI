@@ -49,7 +49,7 @@ public class testsTMS {
         Game g;
         HashMap<String, Integer> chainsUsed = new HashMap<>();
         int[] chainLengths = new int[20];
-        int noOfGames = 1;
+        int noOfGames = 100;
         double totalTime = 0;
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
