@@ -5,6 +5,7 @@ import app.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class PMS implements Strategy {
@@ -13,7 +14,7 @@ public class PMS implements Strategy {
     private Node[] maxConnectionsNodeLayers;
     private int colours = 4;
     private double averageLeafNodes;
-    private double averageTime;
+    private HashMap<Integer, Integer> times = new HashMap<>();
     private int turn = 0;
     private int spaceLeftHeuristic;
     private int garbageSatisfy;
@@ -65,13 +66,14 @@ public class PMS implements Strategy {
         // Making the move in the board
         our.dropPuyo(currentPuyo[0], m);
 //        System.out.println("Total turn TIME :" + (new Date().getTime() - d.getTime()));
-        averageTime = (1 - 1.0 / turn) * averageTime + (1.0 / turn) * (new Date().getTime() - d.getTime());
+        int roundedTime = (int) Math.ceil(new Date().getTime() - d.getTime());
+        times.put(roundedTime, times.getOrDefault(roundedTime, 0) + 1);
         return m;
     }
 
-    public void printStats(){
+    public HashMap<Integer, Integer> printStats(){
         System.out.println("Average Leaf Nodes: " + averageLeafNodes);
-        System.out.println("Average Time: " + averageTime);
+        return times;
     }
 
     private int getSpace(Board b){

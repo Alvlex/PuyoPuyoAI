@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -36,7 +37,7 @@ public class unitTestsPMS {
 
     @Test
     public void testHeuristics(){
-        int depth = 3;
+        int depth = 2;
         HashMap<Integer, HashMap<Integer, Integer>> bestHeuristics = new HashMap<>();
         for (int randomSeed = 0; randomSeed < 10; randomSeed ++) {
             ArrayList<Integer> bestSpaceLeft = new ArrayList<>();
@@ -108,10 +109,10 @@ public class unitTestsPMS {
     public void evaluation(){
         Game g;
         int[] chainLengths = new int[20];
-        int noOfGames = 100;
+        int noOfGames = 1000;
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
-            g = new Game(new Strategy[]{PMS2}, i);
+            g = new Game(new Strategy[]{PMS3}, i);
             chainLengths[g.play(Integer.MAX_VALUE)] ++;
         }
         int avgChains = 0;
@@ -121,7 +122,16 @@ public class unitTestsPMS {
             System.out.println(chainLengths[i]);
         }
         System.out.println("Average chain: " + (double) avgChains / noOfGames);
-        PMS2.printStats();
+        HashMap<Integer, Integer> times = PMS3.printStats();
+        ArrayList<Integer> manipulated = new ArrayList<>();
+        for (int key: times.keySet()){
+            for (int i = 0; i < times.get(key); i ++){
+                manipulated.add(key);
+            }
+        }
+        int[] sorted = manipulated.stream().mapToInt(i -> i).toArray();
+        Arrays.sort(sorted);
+        System.out.println(Arrays.toString(sorted));
     }
 
     private void getMoveMetrics(PMS pms, Board b, int depth){
