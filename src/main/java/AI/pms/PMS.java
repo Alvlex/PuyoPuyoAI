@@ -14,7 +14,7 @@ public class PMS implements Strategy {
     private Node[] maxConnectionsNodeLayers;
     private int colours = 4;
     private double averageLeafNodes;
-    private HashMap<Integer, Integer> times = new HashMap<>();
+    private HashMap<Long, Integer> times = new HashMap<>();
     private int turn = 0;
     private int spaceLeftHeuristic;
     private int garbageSatisfy;
@@ -48,7 +48,7 @@ public class PMS implements Strategy {
     @Override
     public Move makeMove(Board our, Puyo[][] currentPuyo, Board opponent){
         turn ++;
-        Date d = new Date();
+        long start = System.nanoTime();
         prepare();
         Node newRoot = new Node(our, null);
         Date d2 = new Date();
@@ -66,12 +66,12 @@ public class PMS implements Strategy {
         // Making the move in the board
         our.dropPuyo(currentPuyo[0], m);
 //        System.out.println("Total turn TIME :" + (new Date().getTime() - d.getTime()));
-        int roundedTime = (int) Math.ceil(new Date().getTime() - d.getTime());
+        long roundedTime = System.nanoTime() - start;
         times.put(roundedTime, times.getOrDefault(roundedTime, 0) + 1);
         return m;
     }
 
-    public HashMap<Integer, Integer> printStats(){
+    public HashMap<Long, Integer> printStats(){
         System.out.println("Average Leaf Nodes: " + averageLeafNodes);
         return times;
     }

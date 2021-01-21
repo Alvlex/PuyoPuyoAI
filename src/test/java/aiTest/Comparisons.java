@@ -11,15 +11,14 @@ import java.util.Arrays;
 
 public class Comparisons {
 
-    PMS pms = new PMS(3, 8, Integer.MAX_VALUE, 8);
-    TMS tms = new TMS(pms);
+    PMS pms = new PMS(4, 8, Integer.MAX_VALUE, 8);
 
     @Test
     public void prepare8Chain(){
         int[] sorted = new int[100];
         for (int i = 0; i < 100; i ++) {
             System.out.println("Game number " + i);
-            int noOfTurns = get8Chain(new Player(new Board(), 4, tms, i));
+            int noOfTurns = get8Chain(new Player(new Board(), 4, pms, i));
             sorted[i] = noOfTurns;
         }
         Arrays.sort(sorted);

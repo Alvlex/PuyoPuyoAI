@@ -112,7 +112,7 @@ public class unitTestsPMS {
         int noOfGames = 1000;
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
-            g = new Game(new Strategy[]{PMS3}, i);
+            g = new Game(new Strategy[]{PMS4}, i);
             chainLengths[g.play(Integer.MAX_VALUE)] ++;
         }
         int avgChains = 0;
@@ -122,14 +122,14 @@ public class unitTestsPMS {
             System.out.println(chainLengths[i]);
         }
         System.out.println("Average chain: " + (double) avgChains / noOfGames);
-        HashMap<Integer, Integer> times = PMS3.printStats();
-        ArrayList<Integer> manipulated = new ArrayList<>();
-        for (int key: times.keySet()){
+        HashMap<Long, Integer> times = PMS4.printStats();
+        ArrayList<Long> manipulated = new ArrayList<>();
+        for (long key: times.keySet()){
             for (int i = 0; i < times.get(key); i ++){
                 manipulated.add(key);
             }
         }
-        int[] sorted = manipulated.stream().mapToInt(i -> i).toArray();
+        long[] sorted = manipulated.stream().mapToLong(i -> i).toArray();
         Arrays.sort(sorted);
         System.out.println(Arrays.toString(sorted));
     }
