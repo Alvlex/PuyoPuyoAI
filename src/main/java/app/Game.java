@@ -141,7 +141,8 @@ public class Game {
 
     public static void main(String[] args){
 //        Game g = new Game(new Strategy[]{new PMS(3, 16, 320)});
-        Game g = new Game(new Strategy[]{new PMS(2,8,300), new PMS(3, 8, 220)});
+//        Game g = new Game(new Strategy[]{new PMS(2,8,300), new PMS(3, 8, 220)});
+        Game g  = new Game(new Strategy[]{new HumanStrategy(0)});
         System.out.println(g.play());
     }
 }
