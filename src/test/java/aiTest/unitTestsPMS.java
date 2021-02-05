@@ -32,7 +32,7 @@ public class unitTestsPMS {
     public void prepare(){
         PMS2 = new PMS(2, 8, 300);
         PMS3 = new PMS(3, 4, 220);
-        PMS4 = new PMS(4, 16, 400);
+        PMS4 = new PMS(4, 4, 220);
     }
 
     @Test
@@ -105,24 +105,24 @@ public class unitTestsPMS {
         Assert.assertEquals(b.getPuyo(4,0).getColour(), "RED");
     }
 
-    @Test
-    public void evaluation(){
+    public static String evaluation(PMS pms){
         Game g;
         int[] chainLengths = new int[20];
         int noOfGames = 1000;
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
-            g = new Game(new Strategy[]{PMS4}, i);
+            g = new Game(new Strategy[]{pms}, i);
             chainLengths[g.play(Integer.MAX_VALUE)] ++;
         }
         int avgChains = 0;
+        StringBuilder output = new StringBuilder();
         for(int i = 0; i < chainLengths.length; i++) {
-            System.out.print((i) + ":" + "\t");
+            output.append(i).append(":").append("\t");
             avgChains += i * chainLengths[i];
-            System.out.println(chainLengths[i]);
+            output.append(chainLengths[i]).append("\n");
         }
-        System.out.println("Average chain: " + (double) avgChains / noOfGames);
-        HashMap<Long, Integer> times = PMS4.printStats();
+        output.append("Average chain: ").append((double) avgChains / noOfGames).append("\n");
+        HashMap<Long, Integer> times = pms.printStats();
         ArrayList<Long> manipulated = new ArrayList<>();
         for (long key: times.keySet()){
             for (int i = 0; i < times.get(key); i ++){
@@ -131,7 +131,8 @@ public class unitTestsPMS {
         }
         long[] sorted = manipulated.stream().mapToLong(i -> i).toArray();
         Arrays.sort(sorted);
-        System.out.println(Arrays.toString(sorted));
+        output.append(Arrays.toString(sorted));
+        return output.toString();
     }
 
     private void getMoveMetrics(PMS pms, Board b, int depth){

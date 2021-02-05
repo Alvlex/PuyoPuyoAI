@@ -8,8 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class Node {
-    Board b;
-    private List<Node> children;
+    private Board b;
     private Node parent;
     private int garbage;
     private int chainLength;
@@ -26,7 +25,6 @@ public class Node {
     private void prepare(Board b, Node parent){
         this.parent = parent;
         this.b = b.copyBoard();
-        children = new ArrayList<>();
         Chain c = new Chain(this.b.copyBoard());
         c.runChain(this.b.findAllPuyo());
         chainLength = c.chainLength();
@@ -55,14 +53,6 @@ public class Node {
         return connections;
     }
 
-    public void addChildren(Collection<Node> nodes){
-        children.addAll(nodes);
-    }
-
-    public List<Node> getChildren(){
-        return new ArrayList<>(children);
-    }
-
     public Board getBoard(){
         return b;
     }
@@ -79,10 +69,6 @@ public class Node {
 
     void removeParent(){
         parent = null;
-    }
-
-    void removeChildren(){
-        children.clear();
     }
 
     int getConnections(){return connections;}

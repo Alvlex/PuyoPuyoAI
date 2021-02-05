@@ -158,7 +158,6 @@ public class PMS implements Strategy {
                         maxConnectionsNodeLayers[depth] = child;
                     }
                 }
-                root.addChildren(children);
                 return totalLeafNodes;
             } else if (depth == maxDepth) {
                 List<Node> children = maxDepth == 2 ? generatePoss(root, currentPuyo[depth]) : generateDepth4Layer(root, colours);
@@ -170,7 +169,6 @@ public class PMS implements Strategy {
                         maxConnectionsNodeLayers[depth] = child;
                     }
                 }
-                root.addChildren(children);
                 return children.size();
             }
         }
@@ -206,13 +204,5 @@ public class PMS implements Strategy {
             children.addAll(generatePoss(parent, p));
         }
         return children;
-    }
-
-    public int findDepthRecursive(Node n){
-        int currentDepth = 0;
-        for (Node n1: n.getChildren()){
-            currentDepth = Math.max(1 + findDepthRecursive(n1), currentDepth);
-        }
-        return currentDepth;
     }
 }
