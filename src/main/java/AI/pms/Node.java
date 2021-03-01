@@ -10,9 +10,6 @@ import java.util.List;
 public class Node {
     private Board b;
     private Node parent;
-    private int garbage;
-    private int chainLength;
-    private int connections;
 
     public Node(){
         prepare(new Board(), null);
@@ -25,13 +22,6 @@ public class Node {
     private void prepare(Board b, Node parent){
         this.parent = parent;
         this.b = b.copyBoard();
-        Chain c = new Chain(this.b.copyBoard());
-        c.runChain(this.b.findAllPuyo());
-        chainLength = c.chainLength();
-        garbage = c.score();
-        if (c.chainLength() == 0)
-            garbage = -1;
-        connections = countConnections();
     }
 
     public Node(Board b, Node parent){
@@ -58,10 +48,18 @@ public class Node {
     }
 
     int getGarbage(){
-        return garbage;
+        Chain c = new Chain(this.b.copyBoard());
+        c.runChain(this.b.findAllPuyo());
+        if (c.chainLength() == 0)
+            return -1;
+        return c.score();
     }
 
-    int getChainLength(){ return chainLength; }
+    int getChainLength(){
+        Chain c = new Chain(this.b.copyBoard());
+        c.runChain(this.b.findAllPuyo());
+        return c.chainLength();
+    }
 
     Node getParent(){
         return parent;
@@ -71,5 +69,5 @@ public class Node {
         parent = null;
     }
 
-    int getConnections(){return connections;}
+    int getConnections(){return countConnections();}
 }

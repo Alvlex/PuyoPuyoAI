@@ -105,10 +105,15 @@ public class unitTestsPMS {
         Assert.assertEquals(b.getPuyo(4,0).getColour(), "RED");
     }
 
+    @Test
+    public void testPMS4(){
+        evaluation(PMS4);
+    }
+
     public static String evaluation(PMS pms){
         Game g;
         int[] chainLengths = new int[20];
-        int noOfGames = 1000;
+        int noOfGames = 100;
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
             g = new Game(new Strategy[]{pms}, i);
