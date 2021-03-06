@@ -1,9 +1,9 @@
 package tmsPrep;
 
-import app.Board;
-import app.Chain;
-import app.Coordinate;
-import app.Puyo;
+import Game.Board;
+import Game.Chain;
+import Game.Coordinate;
+import Game.Puyo;
 import appTest.Template;
 
 import java.util.ArrayList;

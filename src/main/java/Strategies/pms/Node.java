@@ -1,11 +1,7 @@
-package AI.pms;
+package Strategies.pms;
 
-import app.Board;
-import app.Chain;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import Game.Board;
+import Game.Chain;
 
 public class Node {
     private Board b;

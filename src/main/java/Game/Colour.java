@@ -1,4 +1,4 @@
-package app;
+package Game;
 
 public enum Colour {
     RED(31),

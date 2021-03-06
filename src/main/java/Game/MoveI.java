@@ -1,4 +1,4 @@
-package app;
+package Game;
 
 public interface MoveI {
     void left();

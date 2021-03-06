@@ -1,8 +1,8 @@
-package AI.tms;
+package Strategies.tms;
 
-import app.Board;
-import app.Chain;
-import app.Move;
+import Game.Board;
+import Game.Chain;
+import Game.Move;
 
 import java.util.ArrayList;
 import java.util.List;

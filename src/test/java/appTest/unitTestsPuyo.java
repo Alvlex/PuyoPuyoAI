@@ -1,8 +1,8 @@
 package appTest;
 
-import app.Colour;
-import app.Puyo;
-import app.PuyoI;
+import Game.Colour;
+import Game.Puyo;
+import Game.PuyoI;
 import org.junit.Assert;
 import org.junit.Test;
 

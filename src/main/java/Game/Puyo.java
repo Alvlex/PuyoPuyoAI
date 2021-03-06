@@ -1,6 +1,4 @@
-package app;
-
-import java.util.Random;
+package Game;
 
 public class Puyo implements PuyoI{
     Colour colour;

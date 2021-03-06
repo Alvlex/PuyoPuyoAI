@@ -1,7 +1,7 @@
 package appTest;
 
-import app.Board;
-import app.Garbage;
+import Game.Board;
+import Game.Garbage;
 import org.junit.*;
 
 public class unitTestsGarbage {

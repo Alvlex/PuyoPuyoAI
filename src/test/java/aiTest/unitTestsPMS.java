@@ -1,12 +1,12 @@
 package aiTest;
 
-import AI.Strategy;
-import AI.pms.PMS;
-import AI.pms.Node;
-import app.Board;
-import app.Game;
-import app.Puyo;
-import app.PuyoI;
+import Strategies.Strategy;
+import Strategies.pms.PMS;
+import Strategies.pms.Node;
+import Game.Board;
+import Game.Game;
+import Game.Puyo;
+import Game.PuyoI;
 import appTest.Template;
 import org.junit.Assert;
 import org.junit.Before;

@@ -1,10 +1,8 @@
 package aiTest;
 
-import AI.HumanStrategy;
-import AI.Strategy;
-import AI.pms.PMS;
-import AI.tms.TMS;
-import app.*;
+import Strategies.Strategy;
+import Strategies.pms.PMS;
+import Game.*;
 import org.junit.Test;
 
 import java.util.Arrays;

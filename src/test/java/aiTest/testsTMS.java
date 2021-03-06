@@ -1,9 +1,9 @@
 package aiTest;
 
-import AI.Strategy;
-import AI.pms.PMS;
-import AI.tms.TMS;
-import app.*;
+import Strategies.Strategy;
+import Strategies.pms.PMS;
+import Strategies.tms.TMS;
+import Game.*;
 import appTest.Template;
 import org.junit.Assert;
 import org.junit.Before;

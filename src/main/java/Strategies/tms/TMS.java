@@ -1,8 +1,8 @@
-package AI.tms;
+package Strategies.tms;
 
-import AI.Strategy;
-import AI.pms.PMS;
-import app.*;
+import Strategies.Strategy;
+import Strategies.pms.PMS;
+import Game.*;
 
 import java.util.ArrayList;
 import java.util.Date;

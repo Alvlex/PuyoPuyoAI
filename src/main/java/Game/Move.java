@@ -1,4 +1,4 @@
-package app;
+package Game;
 
 public class Move implements MoveI{
     private int col; // Can only be between 0 and 5

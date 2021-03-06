@@ -32,7 +32,7 @@ public class TmsTemplate {
             }
         }
         try {
-            FileWriter fw = new FileWriter(new File("src/main/java/AI/tms/templates/" + templateFile));
+            FileWriter fw = new FileWriter(new File("src/main/java/Strategies/tms/templates/" + templateFile));
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 78; i ++){
                 for (int j = 0; j < 78; j ++){

@@ -1,9 +1,6 @@
-package app;
+package Game;
 
-import AI.HumanStrategy;
-import AI.RandomStrategy;
-import AI.Strategy;
-import AI.pms.PMS;
+import Strategies.Strategy;
 
 import java.util.ArrayList;
 import java.util.List;

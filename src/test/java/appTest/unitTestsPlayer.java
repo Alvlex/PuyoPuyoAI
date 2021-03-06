@@ -1,7 +1,7 @@
 package appTest;
 
-import AI.TestingStrategy;
-import app.*;
+import Strategies.TestingStrategy;
+import Game.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

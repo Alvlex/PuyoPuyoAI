@@ -1,5 +1,5 @@
 package appTest;
-import app.*;
+import Game.*;
 import org.junit.*;
 
 import java.util.ArrayList;

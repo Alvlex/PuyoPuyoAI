@@ -1,9 +1,9 @@
-package AI;
+package Strategies;
 
-import app.Board;
-import app.Move;
-import app.Output;
-import app.Puyo;
+import Game.Board;
+import Game.Move;
+import Game.Output;
+import Game.Puyo;
 
 import java.util.Scanner;
 

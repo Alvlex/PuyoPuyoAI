@@ -1,14 +1,13 @@
 package appTest;
 
-import app.Board;
-import app.Chain;
-import app.Coordinate;
+import Game.Board;
+import Game.Chain;
+import Game.Coordinate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class unitTestsChain {
 

@@ -1,6 +1,6 @@
 package appTest;
 
-import app.Move;
+import Game.Move;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

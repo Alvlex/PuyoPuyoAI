@@ -1,8 +1,8 @@
 package evaluation;
 
-import AI.Strategy;
-import AI.pms.PMS;
-import app.Game;
+import Strategies.Strategy;
+import Strategies.pms.PMS;
+import Game.Game;
 
 import java.io.*;
 import java.util.ArrayList;

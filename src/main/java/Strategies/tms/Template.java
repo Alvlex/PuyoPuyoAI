@@ -1,13 +1,11 @@
-package AI.tms;
+package Strategies.tms;
 
-import app.Board;
-import app.Coordinate;
+import Game.Board;
+import Game.Coordinate;
 import com.opencsv.CSVReader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +44,7 @@ public class Template {
     }
 
     private void readBoard(String file){
-        File f = new File("src/main/java/AI/tms/templates/" + file);
+        File f = new File("src/main/java/Strategies/tms/templates/" + file);
         try (FileReader fr = new FileReader(f);
              CSVReader reader = new CSVReader(fr)) {
             String[] nextLine;

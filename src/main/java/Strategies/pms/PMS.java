@@ -1,7 +1,7 @@
-package AI.pms;
+package Strategies.pms;
 
-import AI.Strategy;
-import app.*;
+import Strategies.Strategy;
+import Game.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -89,7 +89,7 @@ public class PMS implements Strategy {
 
     private ArrayList<Boolean> getHeuristics(int oppChainLength, int emptySpaceLeft){
         // Rather than space left, maybe number of possibilities left?
-        // If there is only one column left, the AI can't use that much to create a big chain
+        // If there is only one column left, the Strategies can't use that much to create a big chain
         ArrayList<Boolean> result = new ArrayList<>();
         result.add(oppChainLength == 1);
         result.add(emptySpaceLeft <= spaceLeftHeuristic);

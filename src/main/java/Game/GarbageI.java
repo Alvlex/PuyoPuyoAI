@@ -1,4 +1,4 @@
-package app;
+package Game;
 
 public interface GarbageI {
     void makeGarbage(int score); // Doesn't need a test

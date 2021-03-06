@@ -1,4 +1,4 @@
-package app;
+package Game;
 
 public interface OutputI {
     void updateBoard(Board b, int playerNo);

@@ -1,8 +1,8 @@
-package AI;
+package Strategies;
 
-import app.Board;
-import app.Move;
-import app.Puyo;
+import Game.Board;
+import Game.Move;
+import Game.Puyo;
 
 import java.util.Random;
 

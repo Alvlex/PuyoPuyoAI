@@ -1,6 +1,4 @@
-package app;
-
-import AI.Strategy;
+package Game;
 
 import java.util.List;
 
