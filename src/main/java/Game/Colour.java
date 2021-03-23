@@ -1,16 +1,16 @@
 package Game;
 
 public enum Colour {
-    RED(31),
-    GREEN(32),
-    YELLOW(33),
-    BLUE(34),
-    MAGENTA(35),
-    GREY(37),
-    BLACK(30);
+    RED((byte) 31),
+    GREEN((byte) 32),
+    YELLOW((byte) 33),
+    BLUE((byte) 34),
+    MAGENTA((byte) 35),
+    GREY((byte) 37),
+    BLACK((byte) 30);
 
-    public int value;
-    Colour(int i) {
+    public byte value;
+    Colour(byte i) {
         this.value = i;
     }
 }
