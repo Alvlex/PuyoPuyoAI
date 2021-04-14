@@ -40,6 +40,4 @@ public class Garbage implements GarbageI{
             return score - min;
         }
     }
-
-
 }

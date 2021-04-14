@@ -3,8 +3,10 @@ package Game;
 import Strategies.HumanStrategy;
 import Strategies.Strategy;
 import Strategies.pms.PMS;
+import Strategies.tms.TMS;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Game {
     public Player[] players;
@@ -13,7 +15,8 @@ public class Game {
     private int turn = 0;
 
     public Game(Strategy[] strategies){
-        setup(strategies, new int[]{0,0});
+        int randSeed = new Random().nextInt();
+        setup(strategies, new int[]{randSeed,randSeed});
     }
 
     public Game(Strategy[] strategies, int randomSeed){
@@ -42,9 +45,7 @@ public class Game {
         boolean popping = players[0].chain.isPopping(recentlyDropped[0]);
         while((players[0].board.checkPossibilities() || popping) && turn < noOfTurns && max == 0) {
             updateTurn();
-            if (popping && false) {
-                System.out.println(output.printBoards());
-            }
+            System.out.println(output.printBoards());
             popping = singlePlayerHelper(0, popping, new Board());
             if (!popping){
                 max = Math.max(players[0].chain.chainLength(), max);
@@ -52,10 +53,8 @@ public class Game {
             }
         }
         updateTurn();
-        if (false) {
-            System.out.println(output.printBoards());
-            System.out.println("GAME OVER");
-        }
+        System.out.println(output.printBoards());
+        System.out.println("GAME OVER");
         return max;
     }
 
@@ -79,11 +78,9 @@ public class Game {
         boolean[] popping = new boolean[2];
         popping[0] = players[0].chain.isPopping(recentlyDropped[0]);
         popping[1] = players[1].chain.isPopping(recentlyDropped[1]);
-        while(players[0].board.checkPossibilities() && players[1].board.checkPossibilities() && turn < noOfTurns) {
+        while((players[0].board.checkPossibilities() || popping[0]) && (players[1].board.checkPossibilities() || popping[1]) && turn < noOfTurns) {
             updateTurn();
-            if (popping[0] && popping[1] && false) {
-                System.out.println(output.printBoards());
-            }
+            System.out.println(output.printBoards());
             int[] scores = new int[2];
             for (int playerNo = 0; playerNo < players.length; playerNo ++) {
                 popping[playerNo] = singlePlayerHelper(playerNo, popping[playerNo], output.boards[1 - playerNo]);
@@ -143,9 +140,11 @@ public class Game {
         int total = 0;
         for (int i = 0; i < 100; i ++) {
             System.out.println("Game number " + i);
-            Game g = new Game(new Strategy[]{new PMS(3, 16, 320), new PMS(2, 8, 300)}, i);
+            Game g = new Game(new Strategy[]{new PMS(4, 8, 220)}, i);
             total += g.play();
         }
         System.out.println(total);
+        //Game g = new Game(new Strategy[]{new HumanStrategy(0), new TMS(new PMS(3, 8, 220))});
+        //g.play();
     }
 }

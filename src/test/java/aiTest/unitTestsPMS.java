@@ -43,8 +43,8 @@ public class unitTestsPMS {
             ArrayList<Integer> bestSpaceLeft = new ArrayList<>();
             ArrayList<Integer> bestGarbageSatisfy = new ArrayList<>();
             int highestChain = 0;
-            for (int spaceLeft = 0; spaceLeft <= 32; spaceLeft += 4) {
-                for (int garbageSatisfy = 100; garbageSatisfy <= 400; garbageSatisfy += 10) {
+            for (int spaceLeft = 0; spaceLeft <= 12; spaceLeft += 4) {
+                for (int garbageSatisfy = 200; garbageSatisfy <= 400; garbageSatisfy += 10) {
                     PMS pms = new PMS(depth, spaceLeft, garbageSatisfy);
                     Game g = new Game(new Strategy[]{pms}, randomSeed);
                     int tempChain = g.play(Integer.MAX_VALUE);
@@ -107,13 +107,12 @@ public class unitTestsPMS {
 
     @Test
     public void testPMS4(){
-        evaluation(PMS4);
+        System.out.println(evaluation(PMS4, 1));
     }
 
-    public static String evaluation(PMS pms){
+    public static String evaluation(PMS pms, int noOfGames){
         Game g;
         int[] chainLengths = new int[20];
-        int noOfGames = 100;
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
             g = new Game(new Strategy[]{pms}, i);

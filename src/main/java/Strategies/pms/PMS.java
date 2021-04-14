@@ -13,9 +13,7 @@ public class PMS implements Strategy {
     private Node[] mGLayers;
     private Node[] maxConnectionsNodeLayers;
     private int colours = 4;
-    private double averageLeafNodes;
     private HashMap<Long, Integer> times = new HashMap<>();
-    private int turn = 0;
     private int spaceLeftHeuristic;
     private int garbageSatisfy;
     private int chainLengthSatisfy;
@@ -39,7 +37,7 @@ public class PMS implements Strategy {
     private void prepare(){
         mGLayers = new Node[depth];
         maxConnectionsNodeLayers = new Node[depth];
-        for (int i = 0; i < mGLayers.length; i ++){
+        for (int i = 0; i < depth; i ++){
             mGLayers[i] = new Node();
             maxConnectionsNodeLayers[i] = new Node();
         }
@@ -47,15 +45,10 @@ public class PMS implements Strategy {
 
     @Override
     public Move makeMove(Board our, Puyo[][] currentPuyo, Board opponent){
-        turn ++;
         long start = System.nanoTime();
         prepare();
         Node newRoot = new Node(our, null);
-        Date d2 = new Date();
-        int leafNodes = recursiveTree(newRoot, 0, mGLayers.length - 1, colours, currentPuyo);
-//        System.out.println("Leaf nodes: " + leafNodes);
-        averageLeafNodes = (1 - 1.0 / turn) * averageLeafNodes + (1.0 / turn) * leafNodes;
-//        System.out.println("Tree made: " + (new Date().getTime() - d2.getTime()) + "ms");
+        createTree(newRoot, depth - 1, colours, currentPuyo);
         // Gauging the length of opponent chain
         Chain c = new Chain(opponent.copyBoard());
         c.runChain(opponent.findAllPuyo());
@@ -65,14 +58,12 @@ public class PMS implements Strategy {
         Move m = findNextMove(newRoot, target, currentPuyo[0]);
         // Making the move in the board
         our.dropPuyo(currentPuyo[0], m);
-//        System.out.println("Total turn TIME :" + (new Date().getTime() - d.getTime()));
         long roundedTime = System.nanoTime() - start;
         times.put(roundedTime, times.getOrDefault(roundedTime, 0) + 1);
         return m;
     }
 
     public HashMap<Long, Integer> printStats(){
-        System.out.println("Average Leaf Nodes: " + averageLeafNodes);
         return times;
     }
 
@@ -124,55 +115,114 @@ public class PMS implements Strategy {
         throw new RuntimeException(o.printBoards() + "\n" + puyo[0].getColour() + " " + puyo[1].getColour());
     }
 
-    public List<Node> generatePoss(Node parent, Puyo[] puyoPair){
-        List<Node> resultStates = new ArrayList<>();
+    private Node checkBestGarbageP(Node n, Node best){
+        if (n.getGarbage() >= best.getGarbage())
+            return n;
+        else
+            return best;
+    }
+    private Node checkBestConnectionsP(Node n, Node best){
+        if (n.getConnections() >= best.getConnections())
+            return n;
+        else
+            return best;
+    }
 
+    private void checkBestNode(int depth, Node n){
+        if (n.getGarbage() >= mGLayers[depth].getGarbage()) {
+            mGLayers[depth] = n;
+        }
+        if (n.getConnections() >= maxConnectionsNodeLayers[depth].getConnections()) {
+            maxConnectionsNodeLayers[depth] = n;
+        }
+    }
+
+    public List<Node> generatePoss(Node parent, Puyo[] puyoPair){
+        return generatePoss(parent, puyoPair, 0);
+    }
+
+    private Node[] generatePoss4(Node parent, Puyo[] puyoPair){
+        Node bestGarbage = new Node();
+        Node bestConnections = new Node();
+        Move cols = new Move(0, 0);
+        Move rows = new Move(0, 3);
+        Board parentBoard = parent.getBoard();
         for (int i = 0; i < 2; i ++){
             for (int col = 0; col < 6; col ++){
-                Board temp = parent.getBoard().copyBoard();
-                Move m = new Move(col, i * 2);
-                if (temp.dropPuyo(puyoPair, m))
-                    resultStates.add(new Node(temp, parent));
+                Board temp = parentBoard.copyBoard();
+                if (temp.dropPuyo(puyoPair, cols)) {
+                    Node n = new Node(temp, parent);
+                    bestGarbage = checkBestGarbageP(n, bestGarbage);
+                    bestConnections = checkBestConnectionsP(n, bestConnections);
+                }
+                cols.right();
             }
             for (int row = 0; row < 5; row ++){
-                Move m = new Move(row, i * 2 + 1);
-                Board temp = parent.getBoard().copyBoard();
-                if (temp.dropPuyo(puyoPair, m))
-                    resultStates.add(new Node(temp, parent));
+                Board temp = parentBoard.copyBoard();
+                if (temp.dropPuyo(puyoPair, rows)) {
+                    Node n = new Node(temp, parent);
+                    bestGarbage = checkBestGarbageP(n, bestGarbage);
+                    bestConnections = checkBestConnectionsP(n, bestConnections);
+                }
+                rows.right();
             }
+            cols.rot180();
+            rows.rot180();
+        }
+        return new Node[]{bestGarbage, bestConnections};
+    }
+
+    private List<Node> generatePoss(Node parent, Puyo[] puyoPair, int depth){
+        List<Node> resultStates = new ArrayList<>();
+        Move cols = new Move(0, 0);
+        Move rows = new Move(0, 3);
+        Board parentBoard = parent.getBoard();
+        for (int i = 0; i < 2; i ++){
+            for (int col = 0; col < 6; col ++){
+                Board temp = parentBoard.copyBoard();
+                if (temp.dropPuyo(puyoPair, cols)) {
+                    Node n = new Node(temp, parent);
+                    checkBestNode(depth, n);
+                    resultStates.add(n);
+                }
+                cols.right();
+            }
+            for (int row = 0; row < 5; row ++){
+                Board temp = parentBoard.copyBoard();
+                if (temp.dropPuyo(puyoPair, rows)) {
+                    Node n = new Node(temp, parent);
+                    checkBestNode(depth, n);
+                    resultStates.add(n);
+                }
+                rows.right();
+            }
+            cols.rot180();
+            rows.rot180();
         }
         return resultStates;
     }
 
-    private int recursiveTree(Node root, int depth, int maxDepth, int colours, Puyo[][] currentPuyo){
-        if (root.getGarbage() == -1) {
-            if (depth < maxDepth) {
-                List<Node> children = generatePoss(root, currentPuyo[depth]);
-                int totalLeafNodes = 0;
-                for (Node child : children) {
-                    totalLeafNodes += recursiveTree(child, depth + 1, maxDepth, colours, currentPuyo);
-                    if (child.getGarbage() >= mGLayers[depth].getGarbage()) {
-                        mGLayers[depth] = child;
-                    }
-                    if (child.getConnections() >= maxConnectionsNodeLayers[depth].getConnections()) {
-                        maxConnectionsNodeLayers[depth] = child;
-                    }
-                }
-                return totalLeafNodes;
-            } else if (depth == maxDepth) {
-                List<Node> children = maxDepth == 2 ? generatePoss(root, currentPuyo[depth]) : generateDepth4Layer(root, colours);
-                for (Node child : children) {
-                    if (child.getGarbage() >= mGLayers[depth].getGarbage()) {
-                        mGLayers[depth] = child;
-                    }
-                    if (child.getConnections() >= maxConnectionsNodeLayers[depth].getConnections()) {
-                        maxConnectionsNodeLayers[depth] = child;
-                    }
-                }
-                return children.size();
+    private void createTree(Node root, int maxDepth, int colours, Puyo[][] currentPuyo){
+        ArrayList<Node> current = new ArrayList<>();
+        current.add(root);
+        int depth = 0;
+        while(depth != maxDepth) {
+            ArrayList<Node> next = new ArrayList<>();
+            for(Node temp: current) {
+                if (!new Chain(temp.getBoard()).isPopping())
+                    next.addAll(generatePoss(temp, currentPuyo[depth], depth));
+            }
+            current = next;
+            depth ++;
+        }
+        if (maxDepth <= 2) {
+            for (Node temp : current) {
+                if (!new Chain(temp.getBoard()).isPopping())
+                    generatePoss(temp, currentPuyo[depth], maxDepth);
             }
         }
-        return 0;
+        else
+            generateDepth4Layer(current, colours);
     }
 
     private Node selectNode(List<Boolean> heuristics, int oppLength){
@@ -197,12 +247,30 @@ public class PMS implements Strategy {
         return mostConnections;
     }
 
-    private List<Node> generateDepth4Layer(Node parent, int colours){
-        List<Node> children = new ArrayList<>();
-        for (int i = 0; i < colours; i ++){
-            Puyo[] p = {new Puyo(Colour.values()[i]), new Puyo(Colour.values()[i])};
-            children.addAll(generatePoss(parent, p));
+    private void generateDepth4Layer(List<Node> parents, int colours){
+        ArrayList<Node> bestGNodes = new ArrayList<>();
+        ArrayList<Node> bestCNodes = new ArrayList<>();
+        parents.parallelStream().forEach((parent) -> {
+            if (!new Chain(parent.getBoard()).isPopping()) {
+                for (int colour = 0; colour < colours; colour++) {
+                    Puyo[] p = {new Puyo(Colour.values()[colour]), new Puyo(Colour.values()[colour])};
+                    Node[] bestNodes = generatePoss4(parent, p);
+                    bestGNodes.add(bestNodes[0]);
+                    bestCNodes.add(bestNodes[1]);
+                }
+            }
+        });
+        Node highestG = new Node();
+        Node highestC = new Node();
+        for (Node n: bestGNodes){
+            if (n.getGarbage() >= highestG.getGarbage())
+                highestG = n;
         }
-        return children;
+        for (Node n: bestCNodes){
+            if (n.getConnections() >= highestC.getConnections())
+                highestC = n;
+        }
+        mGLayers[3] = highestG;
+        maxConnectionsNodeLayers[3] = highestC;
     }
 }

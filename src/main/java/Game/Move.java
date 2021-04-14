@@ -48,6 +48,10 @@ public class Move implements MoveI{
         rotHelper();
     }
 
+    public void rot180(){
+        rot = (rot + 2) % 4;
+    }
+
     private void rotHelper(){
         if (rot == 1 && col == 0)
             col ++;

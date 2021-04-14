@@ -60,7 +60,7 @@ public class Comparisons {
         int[] results = new int[3];
         for (int i = 0; i < 100; i ++){
             System.out.println("Game number " + i);
-            Game g = new Game(new Strategy[]{new PMS(3,8,220), new PMS(2, 8, 300)}, i);
+            Game g = new Game(new Strategy[]{new PMS(4,8,220), new PMS(2, 8, 300)}, i);
             results[g.play() + 1] ++;
         }
         for (int i = 0; i < 3; i ++){
