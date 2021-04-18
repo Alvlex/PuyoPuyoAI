@@ -50,13 +50,11 @@ public class AwsTests {
                 // APPEND MODE SET HERE
                 // --------------------
                 bw = new BufferedWriter(new FileWriter("temp.txt", true));
-                HashMap<Long, Integer> times = pms.printStats();
-                for (long key: times.keySet()){
-                    for (int j = 0; j < times.get(key); j ++){
-                        bw.write(String.valueOf(key));
-                        bw.newLine();
-                        bw.flush();
-                    }
+                ArrayList<Long> times = pms.getTimes();
+                for (long time: times){
+                    bw.write(String.valueOf(time));
+                    bw.newLine();
+                    bw.flush();
                 }
             } catch (IOException ioe) {
                 ioe.printStackTrace();

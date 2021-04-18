@@ -4,8 +4,6 @@ import Strategies.Strategy;
 import Game.*;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public class PMS implements Strategy {
@@ -13,7 +11,7 @@ public class PMS implements Strategy {
     private Node[] mGLayers;
     private Node[] maxConnectionsNodeLayers;
     private int colours = 4;
-    private HashMap<Long, Integer> times = new HashMap<>();
+    private ArrayList<Long> times = new ArrayList<>();
     private int spaceLeftHeuristic;
     private int garbageSatisfy;
     private int chainLengthSatisfy;
@@ -59,12 +57,14 @@ public class PMS implements Strategy {
         // Making the move in the board
         our.dropPuyo(currentPuyo[0], m);
         long roundedTime = System.nanoTime() - start;
-        times.put(roundedTime, times.getOrDefault(roundedTime, 0) + 1);
+        times.add(roundedTime / (1000000));
         return m;
     }
 
-    public HashMap<Long, Integer> printStats(){
-        return times;
+    public ArrayList<Long> getTimes(){
+        ArrayList<Long> temp = (ArrayList<Long>) times.clone();
+        times.clear();
+        return temp;
     }
 
     private int getSpace(Board b){
@@ -255,20 +255,35 @@ public class PMS implements Strategy {
                 for (int colour = 0; colour < colours; colour++) {
                     Puyo[] p = {new Puyo(Colour.values()[colour]), new Puyo(Colour.values()[colour])};
                     Node[] bestNodes = generatePoss4(parent, p);
-                    bestGNodes.add(bestNodes[0]);
-                    bestCNodes.add(bestNodes[1]);
+                    try {
+                        bestGNodes.add(bestNodes[0]);
+                        bestCNodes.add(bestNodes[1]);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
             }
         });
         Node highestG = new Node();
         Node highestC = new Node();
         for (Node n: bestGNodes){
-            if (n.getGarbage() >= highestG.getGarbage())
-                highestG = n;
+            try {
+                if (n.getGarbage() >= highestG.getGarbage())
+                    highestG = n;
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
         }
         for (Node n: bestCNodes){
-            if (n.getConnections() >= highestC.getConnections())
-                highestC = n;
+            try {
+                if (n.getConnections() >= highestC.getConnections())
+                    highestC = n;
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
         }
         mGLayers[3] = highestG;
         maxConnectionsNodeLayers[3] = highestC;

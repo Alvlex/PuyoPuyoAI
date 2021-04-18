@@ -12,6 +12,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,72 +32,27 @@ public class unitTestsPMS {
 
     @Before
     public void prepare(){
-        PMS2 = new PMS(2, 8, 300);
-        PMS3 = new PMS(3, 4, 220);
-        PMS4 = new PMS(4, 4, 220);
+        PMS2 = new PMS(2, 12, 60);
+        PMS3 = new PMS(3, 12, 160);
+        PMS4 = new PMS(4, 4, 260);
     }
 
     @Test
-    public void testHeuristics(){
-        int depth = 2;
-        HashMap<Integer, HashMap<Integer, Integer>> bestHeuristics = new HashMap<>();
+    public void testHeuristics() throws IOException{
+        int depth = 4;
+        FileWriter myWriter = new FileWriter("PMS" + depth + "heuristics2.csv");
         for (int randomSeed = 0; randomSeed < 10; randomSeed ++) {
-            ArrayList<Integer> bestSpaceLeft = new ArrayList<>();
-            ArrayList<Integer> bestGarbageSatisfy = new ArrayList<>();
-            int highestChain = 0;
             for (int spaceLeft = 0; spaceLeft <= 12; spaceLeft += 4) {
-                for (int garbageSatisfy = 200; garbageSatisfy <= 400; garbageSatisfy += 10) {
+                for (int garbageSatisfy = 160; garbageSatisfy <= 180; garbageSatisfy += 20) {
                     PMS pms = new PMS(depth, spaceLeft, garbageSatisfy);
                     Game g = new Game(new Strategy[]{pms}, randomSeed);
                     int tempChain = g.play(Integer.MAX_VALUE);
-                    if (tempChain > highestChain) {
-                        highestChain = tempChain;
-                        bestSpaceLeft.clear();
-                        bestGarbageSatisfy.clear();
-                        bestSpaceLeft.add(spaceLeft);
-                        bestGarbageSatisfy.add(garbageSatisfy);
-                    } else if (tempChain == highestChain) {
-                        bestGarbageSatisfy.add(garbageSatisfy);
-                        bestSpaceLeft.add(spaceLeft);
-                    }
-                }
-            }
-            System.out.println("Highest Chain: " + highestChain);
-            for (int i = 0; i < bestGarbageSatisfy.size(); i ++) {
-                if (!bestHeuristics.containsKey(bestSpaceLeft.get(i))){
-                    bestHeuristics.put(bestSpaceLeft.get(i), new HashMap<>());
-                    bestHeuristics.get(bestSpaceLeft.get(i)).put(bestGarbageSatisfy.get(i), 1);
-                }
-                else if (!bestHeuristics.get(bestSpaceLeft.get(i)).containsKey(bestGarbageSatisfy.get(i))){
-                    bestHeuristics.get(bestSpaceLeft.get(i)).put(bestGarbageSatisfy.get(i), 1);
-                }
-                else{
-                    bestHeuristics.get(bestSpaceLeft.get(i)).put(bestGarbageSatisfy.get(i), bestHeuristics.get(bestSpaceLeft.get(i)).get(bestGarbageSatisfy.get(i)) + 1);
+                    myWriter.write(randomSeed + "," + spaceLeft + "," + garbageSatisfy + "," + tempChain + '\n');
+                    myWriter.flush();
                 }
             }
         }
-        int highestCount = 0;
-        ArrayList<Integer> bestSpaceList = new ArrayList<>();
-        ArrayList<Integer> bestGarbageList = new ArrayList<>();
-        for (int bestSpace: bestHeuristics.keySet()){
-            for (int bestGarbage: bestHeuristics.get(bestSpace).keySet()){
-                if (bestHeuristics.get(bestSpace).get(bestGarbage) > highestCount){
-                    highestCount = bestHeuristics.get(bestSpace).get(bestGarbage);
-                    bestSpaceList.clear();
-                    bestGarbageList.clear();
-                    bestSpaceList.add(bestSpace);
-                    bestGarbageList.add(bestGarbage);
-                }
-                else if (bestHeuristics.get(bestSpace).get(bestGarbage) == highestCount){
-                    bestGarbageList.add(bestGarbage);
-                    bestSpaceList.add(bestSpace);
-                }
-            }
-        }
-        System.out.println("Highest Count: " + highestCount);
-        for (int i = 0; i < bestGarbageList.size(); i ++){
-            System.out.println(bestSpaceList.get(i) + ", " + bestGarbageList.get(i));
-        }
+        myWriter.close();
     }
 
     @Test
@@ -107,7 +64,7 @@ public class unitTestsPMS {
 
     @Test
     public void testPMS4(){
-        System.out.println(evaluation(PMS4, 1));
+        evaluation(PMS4, 350);
     }
 
     public static String evaluation(PMS pms, int noOfGames){
@@ -126,23 +83,25 @@ public class unitTestsPMS {
             output.append(chainLengths[i]).append("\n");
         }
         output.append("Average chain: ").append((double) avgChains / noOfGames).append("\n");
-        HashMap<Long, Integer> times = pms.printStats();
-        ArrayList<Long> manipulated = new ArrayList<>();
-        for (long key: times.keySet()){
-            for (int i = 0; i < times.get(key); i ++){
-                manipulated.add(key);
-            }
-        }
-        long[] sorted = manipulated.stream().mapToLong(i -> i).toArray();
+        ArrayList<Long> times = pms.getTimes();
+        long[] sorted = times.stream().mapToLong(i -> i).toArray();
         Arrays.sort(sorted);
         output.append(Arrays.toString(sorted));
+        try {
+            FileWriter fw = new FileWriter("EvaluationOutput.txt");
+            fw.write(output.toString());
+            fw.flush();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return output.toString();
     }
 
     private void getMoveMetrics(PMS pms, Board b, int depth){
         System.out.println("Depth " + depth + " PMS");
         pms.makeMove(b, next3Pairs, new Board());
-        pms.printStats();
+        System.out.println(Arrays.toString(pms.getTimes().toArray()));
     }
 
     @Test
