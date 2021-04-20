@@ -63,11 +63,20 @@ public class unitTestsPMS {
     }
 
     @Test
-    public void testPMS4(){
-        evaluation(PMS4, 350);
+    public void testPMS(){
+//        PMS oldPms3 = new PMS(3, 4, 220);
+//        PMS chainPms3 = new PMS(3, 4, Integer.MAX_VALUE, 7);
+//        evaluation(oldPms3, 1000, "OldPMS3");
+//        evaluation(chainPms3, 1000, "chainPMS3");
+        evaluation(PMS3, 1, "Test");
     }
 
-    public static String evaluation(PMS pms, int noOfGames){
+    @Test
+    public void testPMS4(){
+        evaluation(PMS4, 350, "EvaluationOutput");
+    }
+
+    public static void evaluation(PMS pms, int noOfGames, String fileName){
         Game g;
         int[] chainLengths = new int[20];
         for (int i = 0; i < noOfGames; i ++) {
@@ -88,14 +97,13 @@ public class unitTestsPMS {
         Arrays.sort(sorted);
         output.append(Arrays.toString(sorted));
         try {
-            FileWriter fw = new FileWriter("EvaluationOutput.txt");
+            FileWriter fw = new FileWriter(fileName + ".txt");
             fw.write(output.toString());
             fw.flush();
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return output.toString();
     }
 
     private void getMoveMetrics(PMS pms, Board b, int depth){
