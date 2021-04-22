@@ -1,0 +1,25 @@
+PMS2 vs PMS3:
+    Draw: 0
+    PMS2: 32
+    PMS3: 68
+    (may be wrong??)
+
+PMS2 vs TMS:
+    Draw: 0
+    PMS2: 90
+    TMS: 10
+
+PMS3 vs TMS:
+    Draw: 0
+    PMS3: 66
+    TMS: 34
+
+PMS2 vs PMS4:
+    Draw: 0
+    PMS2: 34
+    PMS4: 66
+
+PMS3 vs PMS4:
+    Draw: 0
+    PMS3: 29
+    PMS4: 71

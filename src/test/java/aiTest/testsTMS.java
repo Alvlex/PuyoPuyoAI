@@ -9,6 +9,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -45,31 +49,40 @@ public class testsTMS {
     }
 
     @Test
-    public void evaluation(){
+    public void evalTMS(){
+        evaluation(1000, "TMSEval");
+    }
+
+    public static void evaluation(int noOfGames, String fileName){
         Game g;
-        HashMap<String, Integer> chainsUsed = new HashMap<>();
+        ArrayList<Long> times = new ArrayList<>();
         int[] chainLengths = new int[20];
-        int noOfGames = 100;
-        double totalTime = 0;
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
-            TMS tms = new TMS(pms);
+            TMS tms = new TMS();
             g = new Game(new Strategy[]{tms}, i);
             chainLengths[g.play(Integer.MAX_VALUE)] ++;
-            chainsUsed.put(tms.getTemplate(), chainsUsed.getOrDefault(tms.getTemplate(), 0) + 1);
-            totalTime += tms.getAverageTime();
+            times.addAll(tms.getTimes());
         }
         int avgChains = 0;
+        StringBuilder output = new StringBuilder();
         for(int i = 0; i < chainLengths.length; i++) {
-            System.out.print((i) + ":" + "\t");
+            output.append(i).append(":").append("\t");
             avgChains += i * chainLengths[i];
-            System.out.println(chainLengths[i]);
+            output.append(chainLengths[i]).append("\n");
         }
-        System.out.println("Average chain: " + (double) avgChains / noOfGames);
-        for (String chain: chainsUsed.keySet()){
-            System.out.println(chain + ": " + chainsUsed.get(chain));
+        output.append("Average chain: ").append((double) avgChains / noOfGames).append("\n");
+        long[] sorted = times.stream().mapToLong(i -> i).toArray();
+        Arrays.sort(sorted);
+        output.append(Arrays.toString(sorted));
+        try {
+            FileWriter fw = new FileWriter(fileName + ".txt");
+            fw.write(output.toString());
+            fw.flush();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        System.out.println("Average Time: " + totalTime / noOfGames);
     }
 
     @Test

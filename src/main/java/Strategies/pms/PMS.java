@@ -128,19 +128,6 @@ public class PMS implements Strategy {
             return best;
     }
 
-    private void checkBestNode(int depth, Node n){
-        if (n.getGarbage() >= mGLayers[depth].getGarbage()) {
-            mGLayers[depth] = n;
-        }
-        if (n.getConnections() >= maxConnectionsNodeLayers[depth].getConnections()) {
-            maxConnectionsNodeLayers[depth] = n;
-        }
-    }
-
-    public List<Node> generatePoss(Node parent, Puyo[] puyoPair){
-        return generatePoss(parent, puyoPair, 0);
-    }
-
     private Node[] generatePoss4(Node parent, Puyo[] puyoPair){
         Node bestGarbage = new Node();
         Node bestConnections = new Node();
@@ -172,32 +159,22 @@ public class PMS implements Strategy {
         return new Node[]{bestGarbage, bestConnections};
     }
 
-    private List<Node> generatePoss(Node parent, Puyo[] puyoPair, int depth){
+    public List<Node> generatePoss(Node parent, Puyo[] puyoPair){
         List<Node> resultStates = new ArrayList<>();
-        Move cols = new Move(0, 0);
-        Move rows = new Move(0, 3);
-        Board parentBoard = parent.getBoard();
+
         for (int i = 0; i < 2; i ++){
             for (int col = 0; col < 6; col ++){
-                Board temp = parentBoard.copyBoard();
-                if (temp.dropPuyo(puyoPair, cols)) {
-                    Node n = new Node(temp, parent);
-                    checkBestNode(depth, n);
-                    resultStates.add(n);
-                }
-                cols.right();
+                Board temp = parent.getBoard().copyBoard();
+                Move m = new Move(col, i * 2);
+                if (temp.dropPuyo(puyoPair, m))
+                    resultStates.add(new Node(temp, parent));
             }
             for (int row = 0; row < 5; row ++){
-                Board temp = parentBoard.copyBoard();
-                if (temp.dropPuyo(puyoPair, rows)) {
-                    Node n = new Node(temp, parent);
-                    checkBestNode(depth, n);
-                    resultStates.add(n);
-                }
-                rows.right();
+                Move m = new Move(row, i * 2 + 1);
+                Board temp = parent.getBoard().copyBoard();
+                if (temp.dropPuyo(puyoPair, m))
+                    resultStates.add(new Node(temp, parent));
             }
-            cols.rot180();
-            rows.rot180();
         }
         return resultStates;
     }
@@ -210,15 +187,32 @@ public class PMS implements Strategy {
             ArrayList<Node> next = new ArrayList<>();
             for(Node temp: current) {
                 if (!new Chain(temp.getBoard()).isPopping())
-                    next.addAll(generatePoss(temp, currentPuyo[depth], depth));
+                    next.addAll(generatePoss(temp, currentPuyo[depth]));
+            }
+            for (Node child: next){
+                if (child.getGarbage() >= mGLayers[depth].getGarbage()) {
+                    mGLayers[depth] = child;
+                }
+                if (child.getConnections() >= maxConnectionsNodeLayers[depth].getConnections()) {
+                    maxConnectionsNodeLayers[depth] = child;
+                }
             }
             current = next;
             depth ++;
         }
         if (maxDepth <= 2) {
             for (Node temp : current) {
-                if (!new Chain(temp.getBoard()).isPopping())
-                    generatePoss(temp, currentPuyo[depth], maxDepth);
+                if (!new Chain(temp.getBoard()).isPopping()) {
+                    List<Node> children = generatePoss(temp, currentPuyo[depth]);
+                    for (Node child: children){
+                        if (child.getGarbage() >= mGLayers[depth].getGarbage()) {
+                            mGLayers[depth] = child;
+                        }
+                        if (child.getConnections() >= maxConnectionsNodeLayers[depth].getConnections()) {
+                            maxConnectionsNodeLayers[depth] = child;
+                        }
+                    }
+                }
             }
         }
         else

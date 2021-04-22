@@ -6,6 +6,9 @@ import Game.Chain;
 public class Node {
     private Board b;
     private Node parent;
+    private int connections;
+    private int garbage;
+    private int chainLength;
 
     public Node(){
         prepare(new Board(), null);
@@ -18,6 +21,9 @@ public class Node {
     private void prepare(Board b, Node parent){
         this.parent = parent;
         this.b = b.copyBoard();
+        this.connections = countConnections();
+        this.garbage = countGarbage();
+        this.chainLength = countChainLength();
     }
 
     public Node(Board b, Node parent){
@@ -43,7 +49,7 @@ public class Node {
         return b;
     }
 
-    int getGarbage(){
+    int countGarbage(){
         Chain c = new Chain(this.b.copyBoard());
         c.runChain(this.b.findAllPuyo());
         if (c.chainLength() == 0)
@@ -51,10 +57,18 @@ public class Node {
         return c.score();
     }
 
-    int getChainLength(){
+    int getGarbage(){
+        return garbage;
+    }
+
+    int countChainLength(){
         Chain c = new Chain(this.b.copyBoard());
         c.runChain(this.b.findAllPuyo());
         return c.chainLength();
+    }
+
+    int getChainLength(){
+        return chainLength;
     }
 
     Node getParent(){
@@ -65,5 +79,5 @@ public class Node {
         parent = null;
     }
 
-    int getConnections(){return countConnections();}
+    int getConnections(){return connections;}
 }

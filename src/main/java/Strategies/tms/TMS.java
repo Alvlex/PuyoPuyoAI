@@ -14,12 +14,11 @@ public class TMS implements Strategy {
     private ArrayList<Template> templates = new ArrayList<>();
     private PMS pms;
     private boolean chainMade = false;
-    private double averageTime;
+    private ArrayList<Long> times = new ArrayList<>();
     private int turn = 0;
     private String templateMade = "Nothing Completed";
 
-    public TMS(PMS pms){
-        this.pms = pms;
+    private void prep(){
         templates.add(new Template("Andromeda.csv"));
         templates.add(new Template("deAlice.csv"));
         templates.add(new Template("Diving.csv"));
@@ -32,8 +31,19 @@ public class TMS implements Strategy {
         templates.add(new Template("Yayoi.csv"));
     }
 
+    public TMS(){
+        this.pms = new PMS(3,12,160);
+        prep();
+    }
+
+    public TMS(PMS pms){
+        this.pms = pms;
+        prep();
+    }
+
     @Override
     public Move makeMove(Board b, Puyo[][] currentPuyo, Board oppBoard) {
+        long start = System.nanoTime();
         short[][] currentStateMatrix = generateStateMatrix(b);
         for (Template t: templates) {
             if (getScore(currentStateMatrix, t, b) >= 0.99 && !chainMade) {
@@ -51,7 +61,7 @@ public class TMS implements Strategy {
         }
         nodes.clear();
         turn ++;
-        Date d = new Date();
+
         Node root = new Node(b, null, null);
         recursiveTree(root, 0, 2, currentPuyo);
         if (nodes.size() == 0){
@@ -64,7 +74,8 @@ public class TMS implements Strategy {
 
         Move m = findNextMove(root, selectedNode, currentPuyo);
         b.dropPuyo(currentPuyo[0], m);
-        averageTime = (1 - 1.0 / turn) * averageTime + (1.0 / turn) * (new Date().getTime() - d.getTime());
+        long roundedTime = System.nanoTime() - start;
+        times.add(roundedTime / (1000000));
         return m;
     }
 
@@ -105,8 +116,8 @@ public class TMS implements Strategy {
         return selectedNode;
     }
 
-    public double getAverageTime(){
-        return averageTime;
+    public ArrayList<Long> getTimes(){
+        return times;
     }
     public String getTemplate(){
         return templateMade;
@@ -134,7 +145,7 @@ public class TMS implements Strategy {
                 if (p1 == null || p2 == null){
                     matrix[i][j] = 0;
                 }
-                else if (p1.getColour().equals(p2.getColour())){
+                else if (p1.getColour().equals(p2.getColour()) && !p1.getColour().equals("GREY")){
                     matrix[i][j] = 1;
                 }
                 else{

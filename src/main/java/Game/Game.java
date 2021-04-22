@@ -99,12 +99,14 @@ public class Game {
         updateTurn();
         System.out.println(output.printBoards());
         System.out.println("GAME OVER");
-        if (!players[0].board.checkPossibilities())
-            return 1;
-        else if (!players[1].board.checkPossibilities())
-            return 0;
-        else
+        if (!(players[0].board.checkPossibilities() || popping[0]) && !(players[1].board.checkPossibilities() || popping[1]))
             return -1;
+        else if (!(players[0].board.checkPossibilities() || popping[0]))
+            return 0;
+        else if (!(players[1].board.checkPossibilities() || popping[1]))
+            return 1;
+        else
+            return 2;
     }
 
     private void updateTurn(){

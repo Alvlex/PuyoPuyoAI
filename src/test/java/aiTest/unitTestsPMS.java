@@ -33,7 +33,7 @@ public class unitTestsPMS {
     @Before
     public void prepare(){
         PMS2 = new PMS(2, 12, 60);
-        PMS3 = new PMS(3, 12, 160);
+        PMS3 = new PMS(3, 4, Integer.MAX_VALUE, 7);
         PMS4 = new PMS(4, 4, 260);
     }
 
@@ -68,7 +68,7 @@ public class unitTestsPMS {
 //        PMS chainPms3 = new PMS(3, 4, Integer.MAX_VALUE, 7);
 //        evaluation(oldPms3, 1000, "OldPMS3");
 //        evaluation(chainPms3, 1000, "chainPMS3");
-        evaluation(PMS3, 1, "Test");
+        evaluation(PMS3, 1000, "Test");
     }
 
     @Test
