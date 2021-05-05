@@ -1,5 +1,7 @@
 package aiTest;
 
+import Strategies.HumanStrategy;
+import Strategies.RandomStrategy;
 import Strategies.Strategy;
 import Strategies.pms.PMS;
 import Game.*;
@@ -10,7 +12,7 @@ import java.util.Arrays;
 
 public class Comparisons {
 
-    PMS pms = new PMS(3, 12, Integer.MAX_VALUE, 8);
+    PMS pms = new PMS(2, 12, Integer.MAX_VALUE, 8);
     TMS tms = new TMS(pms);
 
     @Test
@@ -18,7 +20,7 @@ public class Comparisons {
         int[] sorted = new int[100];
         for (int i = 0; i < 100; i ++) {
             System.out.println("Game number " + i);
-            int noOfTurns = get8Chain(new Player(new Board(), 4, tms, i));
+            int noOfTurns = get8Chain(new Player(new Board(), 4, new TMS(), i));
             sorted[i] = noOfTurns;
         }
         Arrays.sort(sorted);
@@ -31,6 +33,8 @@ public class Comparisons {
         while(p.board.checkPossibilities() || popping) {
             popping = singlePlayerHelper(p, popping);
             turn ++;
+            if (p.s instanceof TMS && ((TMS) p.s).chainMade)
+                return turn;
             if (!popping){
                 p.chain.resetChain();
             }
@@ -59,14 +63,14 @@ public class Comparisons {
 
     @Test
     public void compareAIWrap(){
-        compareAI(new PMS(4, 4, 260), new PMS(3, 12, 160));
+        compareAI(new PMS(4, 4, 260), new RandomStrategy(0));
     }
 
     public void compareAI(Strategy strat1, Strategy strat2){
         int[] results = new int[3];
         for (int i = 0; i < 100; i ++){
             System.out.println("Game number " + i);
-            Game g = new Game(new Strategy[]{strat1, new TMS()});
+            Game g = new Game(new Strategy[]{strat1, new RandomStrategy(0)});
             //g.play() returns -1 for draw, 0 for 1st player lose and 1 for second player lose.
             // Returns 2 otherwise.
             results[g.play() + 1] ++;

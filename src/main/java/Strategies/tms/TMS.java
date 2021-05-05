@@ -13,9 +13,8 @@ public class TMS implements Strategy {
     private List<Node> nodes = new ArrayList<>();
     private ArrayList<Template> templates = new ArrayList<>();
     private PMS pms;
-    private boolean chainMade = false;
+    public boolean chainMade = false;
     private ArrayList<Long> times = new ArrayList<>();
-    private int turn = 0;
     private String templateMade = "Nothing Completed";
 
     private void prep(){
@@ -48,10 +47,10 @@ public class TMS implements Strategy {
         for (Template t: templates) {
             if (getScore(currentStateMatrix, t, b) >= 0.99 && !chainMade) {
                 chainMade = true;
-                System.out.println("CHAIN MADE!");
+//                System.out.println("CHAIN MADE!");
                 templateMade = t.name;
-                Output o = new Output(new Board[]{b});
-                System.out.println(o.printBoards());
+//                Output o = new Output(new Board[]{b});
+//                System.out.println(o.printBoards());
             }
         }
         if (templates.size() == 0 || chainMade){
@@ -60,7 +59,6 @@ public class TMS implements Strategy {
 //            throw new RuntimeException("No valid template to follow!\n" + o.printBoards());
         }
         nodes.clear();
-        turn ++;
 
         Node root = new Node(b, null, null);
         recursiveTree(root, 0, 2, currentPuyo);

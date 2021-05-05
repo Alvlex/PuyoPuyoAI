@@ -50,16 +50,16 @@ public class testsTMS {
 
     @Test
     public void evalTMS(){
-        evaluation(1000, "TMSEval");
+        evaluation(100, "TMSEval", new PMS(4, 4, 300));
     }
 
-    public static void evaluation(int noOfGames, String fileName){
+    public static void evaluation(int noOfGames, String fileName, PMS pms){
         Game g;
         ArrayList<Long> times = new ArrayList<>();
         int[] chainLengths = new int[20];
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
-            TMS tms = new TMS();
+            TMS tms = new TMS(pms);
             g = new Game(new Strategy[]{tms}, i);
             chainLengths[g.play(Integer.MAX_VALUE)] ++;
             times.addAll(tms.getTimes());

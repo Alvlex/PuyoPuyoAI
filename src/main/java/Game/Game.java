@@ -6,9 +6,12 @@ import Strategies.pms.PMS;
 import Strategies.tms.TMS;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Game {
+    private Scanner x = new Scanner(System.in);
     public Player[] players;
     private ArrayList<Coordinate>[] recentlyDropped;
     private Output output;
@@ -42,19 +45,32 @@ public class Game {
 
     private int playSinglePlayer(int noOfTurns){
         int max = 0;
+        String bestChainBoard = null;
         boolean popping = players[0].chain.isPopping(recentlyDropped[0]);
-        while((players[0].board.checkPossibilities() || popping) && turn < noOfTurns && max == 0) {
+        boolean prevPop;
+        while((players[0].board.checkPossibilities() || popping) && turn < noOfTurns) {
             updateTurn();
+            System.out.println(output.printCurrentPuyo());
             System.out.println(output.printBoards());
+            x.nextLine();
+            prevPop = popping;
             popping = singlePlayerHelper(0, popping, new Board());
+            if (!prevPop && popping){
+                updateTurn();
+                bestChainBoard = output.printBoards();
+            }
             if (!popping){
-                max = Math.max(players[0].chain.chainLength(), max);
+                if (!(players[0].s instanceof TMS) || ((TMS) players[0].s).chainMade) {
+                    max = Math.max(players[0].chain.chainLength(), max);
+                }
                 players[0].chain.resetChain();
             }
         }
-        updateTurn();
-        System.out.println(output.printBoards());
-        System.out.println("GAME OVER");
+        if (max >= 12)
+            System.out.println(bestChainBoard);
+//        updateTurn();
+//        System.out.println(output.printBoards());
+//        System.out.println("GAME OVER");
         return max;
     }
 
@@ -64,7 +80,8 @@ public class Game {
             popping = players[playerNo].chain.isPopping(players[playerNo].findRecentlyDropped(m));
             recentlyDropped[playerNo].clear();
             recentlyDropped[playerNo].addAll(players[playerNo].findRecentlyDropped(m));
-            players[playerNo].garbage.dropGarbage();
+            if (!popping)
+                players[playerNo].garbage.dropGarbage();
         } else {
 //            System.out.println("Player " + (playerNo + 1) + " has a " + (players[playerNo].chain.chainLength() + 1) + "-Chain!");
             // Implement chaining
@@ -80,7 +97,11 @@ public class Game {
         popping[1] = players[1].chain.isPopping(recentlyDropped[1]);
         while((players[0].board.checkPossibilities() || popping[0]) && (players[1].board.checkPossibilities() || popping[1]) && turn < noOfTurns) {
             updateTurn();
-            System.out.println(output.printBoards());
+            if (popping[0]) {
+                System.out.println(output.printBoards());
+                x.nextLine();
+            }
+
             int[] scores = new int[2];
             for (int playerNo = 0; playerNo < players.length; playerNo ++) {
                 popping[playerNo] = singlePlayerHelper(playerNo, popping[playerNo], output.boards[1 - playerNo]);
@@ -97,8 +118,8 @@ public class Game {
             }
         }
         updateTurn();
-        System.out.println(output.printBoards());
-        System.out.println("GAME OVER");
+//        System.out.println(output.printBoards());
+//        System.out.println("GAME OVER");
         if (!(players[0].board.checkPossibilities() || popping[0]) && !(players[1].board.checkPossibilities() || popping[1]))
             return -1;
         else if (!(players[0].board.checkPossibilities() || popping[0]))
@@ -139,14 +160,16 @@ public class Game {
     public static void main(String[] args){
 //        Game g = new Game(new Strategy[]{new PMS(3, 16, 320)});
 //        Game g = new Game(new Strategy[]{new PMS(2,8,300), new PMS(3, 8, 220)});
-        int total = 0;
-        for (int i = 0; i < 100; i ++) {
-            System.out.println("Game number " + i);
-            Game g = new Game(new Strategy[]{new PMS(4, 8, 220)}, i);
-            total += g.play();
-        }
-        System.out.println(total);
-        //Game g = new Game(new Strategy[]{new HumanStrategy(0), new TMS(new PMS(3, 8, 220))});
-        //g.play();
+//        int[] gameWins = new int[2];
+//        for (int i = 5; i < 10; i ++) {
+//            System.out.println("Game number " + i);
+//            Game g = new Game(new Strategy[]{new PMS(4, 4, 260), new HumanStrategy(1)}, i);
+//            gameWins[g.play()] ++;
+//        }
+//        System.out.println(Arrays.toString(gameWins));
+//        //Game g = new Game(new Strategy[]{new HumanStrategy(0), new TMS(new PMS(3, 8, 220))});
+//        //g.play();
+        Game g = new Game(new Strategy[]{new HumanStrategy(0),new TMS(new PMS(3, 12, 160))}, 0);
+        g.play();
     }
 }

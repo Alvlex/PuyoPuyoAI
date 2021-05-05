@@ -1,5 +1,6 @@
 package aiTest;
 
+import Strategies.RandomStrategy;
 import Strategies.Strategy;
 import Strategies.pms.PMS;
 import Strategies.pms.Node;
@@ -7,6 +8,7 @@ import Game.Board;
 import Game.Game;
 import Game.Puyo;
 import Game.PuyoI;
+import Strategies.tms.TMS;
 import appTest.Template;
 import org.junit.Assert;
 import org.junit.Before;
@@ -73,7 +75,7 @@ public class unitTestsPMS {
 
     @Test
     public void testPMS4(){
-        evaluation(PMS4, 350, "EvaluationOutput");
+        evaluation(PMS4, 100, "RandomOutput");
     }
 
     public static void evaluation(PMS pms, int noOfGames, String fileName){
@@ -81,7 +83,7 @@ public class unitTestsPMS {
         int[] chainLengths = new int[20];
         for (int i = 0; i < noOfGames; i ++) {
             System.out.println("Game number " + i);
-            g = new Game(new Strategy[]{pms}, i);
+            g = new Game(new Strategy[]{new TMS(pms)}, i);
             chainLengths[g.play(Integer.MAX_VALUE)] ++;
         }
         int avgChains = 0;

@@ -242,44 +242,23 @@ public class PMS implements Strategy {
     }
 
     private void generateDepth4Layer(List<Node> parents, int colours){
-        ArrayList<Node> bestGNodes = new ArrayList<>();
-        ArrayList<Node> bestCNodes = new ArrayList<>();
-        parents.parallelStream().forEach((parent) -> {
-            if (!new Chain(parent.getBoard()).isPopping()) {
-                for (int colour = 0; colour < colours; colour++) {
-                    Puyo[] p = {new Puyo(Colour.values()[colour]), new Puyo(Colour.values()[colour])};
-                    Node[] bestNodes = generatePoss4(parent, p);
-                    try {
-                        bestGNodes.add(bestNodes[0]);
-                        bestCNodes.add(bestNodes[1]);
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
-                    }
+        final Object bestNodeLock = new Object();
+        final Object bestConnectionsLock = new Object();
+        mGLayers[3] = new Node();
+        maxConnectionsNodeLayers[3] = new Node();
+        parents.parallelStream().filter(parent -> !new Chain(parent.getBoard()).isPopping()).forEach(parent -> {
+            for (int colour = 0; colour < colours; colour++) {
+                Puyo[] p = {new Puyo(Colour.values()[colour]), new Puyo(Colour.values()[colour])};
+                Node[] bestNodes = generatePoss4(parent, p);
+                synchronized(bestNodeLock){
+                    if (bestNodes[0].getGarbage() >= mGLayers[3].getGarbage())
+                        mGLayers[3] = bestNodes[0];
+                }
+                synchronized(bestConnectionsLock){
+                    if (bestNodes[1].getConnections() >= maxConnectionsNodeLayers[3].getConnections())
+                        maxConnectionsNodeLayers[3] = bestNodes[1];
                 }
             }
         });
-        Node highestG = new Node();
-        Node highestC = new Node();
-        for (Node n: bestGNodes){
-            try {
-                if (n.getGarbage() >= highestG.getGarbage())
-                    highestG = n;
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-        for (Node n: bestCNodes){
-            try {
-                if (n.getConnections() >= highestC.getConnections())
-                    highestC = n;
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-        mGLayers[3] = highestG;
-        maxConnectionsNodeLayers[3] = highestC;
     }
 }
